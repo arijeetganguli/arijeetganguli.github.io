@@ -1,21 +1,20 @@
 const programming = [
   { id: 1, name: "C#", value: 95 },
-  { id: 2, name: "JavaScript", value: 80 },
-  { id: 3, name: "Python", value: 30 },
-  { id: 3, name: "React", value: 50 },
-  { id: 3, name: "Vue", value: 40 },
-  { id: 3, name: "MSSQL", value: 90 },
-  { id: 3, name: "MySQL", value: 90 },
-  { id: 3, name: "PostgreSQL", value: 50 },
-  { id: 3, name: "MongoDB", value: 80 },
-  { id: 3, name: "AWS DocumentDB", value: 85 },
-  { id: 3, name: "RavenDB", value: 40 },
-  { id: 3, name: "TrinoDB", value: 75 },
+  { id: 2, name: ".NET", value: 85 },
+  { id: 3, name: "JavaScript", value: 80 },
+  { id: 4, name: "Nodejs", value: 75 },
+  { id: 5, name: "React", value: 50 },
+  { id: 6, name: "Vue", value: 40 },
+  { id: 7, name: "Python", value: 30 },
 ];
-const language = [
-  { id: 1, name: "English", value: 90 },
-  { id: 2, name: "Hindi", value: 95 },
-  { id: 3, name: "Bengali", value: 85 },
+const databases = [
+  { id: 6, name: "MSSQL", value: 90 },
+  { id: 7, name: "MySQL", value: 90 },
+  { id: 10, name: "AWS DocumentDB", value: 85 },
+  { id: 9, name: "MongoDB", value: 80 },
+  { id: 12, name: "TrinoDB", value: 75 },
+  { id: 8, name: "PostgreSQL", value: 50 },
+  { id: 11, name: "RavenDB", value: 40 },
 ];
 const Skills = () => {
   return (
@@ -47,10 +46,10 @@ const Skills = () => {
           </div>
           <div className="right w-1/2 pl-[50px]">
             <div className="sanari_section_title w-full h-auto clear-both float-left mb-[40px]">
-              <h3 className="text-[20px] font-bold">Language Skills</h3>
+              <h3 className="text-[20px] font-bold">Databases</h3>
             </div>
             <div className="sanari_progress">
-              {language.map((skill) => (
+              {databases.map((skill) => (
                 <div className="progress_inner" key={skill.id}>
                   <span>
                     <span className="label">{skill.name}</span>
