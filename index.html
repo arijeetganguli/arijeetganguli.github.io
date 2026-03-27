@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arijeet Ganguli — Data Engineering Manager</title>
+  <meta name="description" content="Arijeet Ganguli is a Data Engineering Manager specializing in scalable data platforms, large-scale ingestion, data quality systems, and cost-optimized cloud architectures.">
+  <meta name="author" content="Arijeet Ganguli">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Arijeet Ganguli — Data Engineering Manager">
+  <meta property="og:description" content="Building Scalable Data Platforms. Expert in data architecture, large-scale ingestion, and cloud-optimized solutions.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://arijeetganguli.github.io">
+  <meta property="og:image" content="https://arijeetganguli.github.io/og-image.png">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Arijeet Ganguli — Data Engineering Manager">
+  <meta name="twitter:description" content="Building Scalable Data Platforms. Expert in data architecture, large-scale ingestion, and cloud-optimized solutions.">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bg: '#0B0F14',
+            'bg-secondary': '#121A26',
+            accent: '#2F80ED',
+            'accent-secondary': '#27D1E7',
+            text: '#E6EDF3',
+            muted: '#AAB4C2',
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+          },
+        },
+      },
+    }
+  </script>
+
+  <!-- Inter + JetBrains Mono fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-bg text-text font-sans antialiased">
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- NAVBAR                                      -->
+  <!-- ═══════════════════════════════════════════ -->
+  <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-bg/80 backdrop-blur-lg border-b border-white/5">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <a href="#hero" class="text-lg font-semibold tracking-tight text-text hover:text-accent transition-colors">
+          AG<span class="text-accent">.</span>
+        </a>
+        <div class="hidden md:flex items-center gap-8">
+          <a href="#about" class="nav-link text-sm text-muted hover:text-text transition-colors">About</a>
+          <a href="#projects" class="nav-link text-sm text-muted hover:text-text transition-colors">Projects</a>
+          <a href="#architecture" class="nav-link text-sm text-muted hover:text-text transition-colors">Architecture</a>
+          <a href="#skills" class="nav-link text-sm text-muted hover:text-text transition-colors">Skills</a>
+          <a href="#contact" class="nav-link text-sm text-muted hover:text-text transition-colors">Contact</a>
+        </div>
+        <button id="mobile-menu-btn" class="md:hidden text-muted hover:text-text transition-colors" aria-label="Toggle menu">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="md:hidden hidden border-t border-white/5 bg-bg/95 backdrop-blur-lg">
+      <div class="px-4 py-4 space-y-3">
+        <a href="#about" class="mobile-nav-link block text-sm text-muted hover:text-text transition-colors">About</a>
+        <a href="#projects" class="mobile-nav-link block text-sm text-muted hover:text-text transition-colors">Projects</a>
+        <a href="#architecture" class="mobile-nav-link block text-sm text-muted hover:text-text transition-colors">Architecture</a>
+        <a href="#skills" class="mobile-nav-link block text-sm text-muted hover:text-text transition-colors">Skills</a>
+        <a href="#contact" class="mobile-nav-link block text-sm text-muted hover:text-text transition-colors">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- HERO                                        -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section id="hero" class="relative min-h-screen flex items-center overflow-hidden">
+    <!-- Subtle ambient glow -->
+    <div class="absolute top-1/3 left-1/4 w-96 h-96 bg-accent/[0.06] rounded-full blur-[120px] pointer-events-none"></div>
+    <div class="absolute bottom-1/4 right-1/3 w-72 h-72 bg-accent-secondary/[0.04] rounded-full blur-[100px] pointer-events-none"></div>
+
+    <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full">
+      <div class="grid lg:grid-cols-[5fr_7fr] gap-12 lg:gap-16 items-center">
+
+        <!-- LEFT: Text content -->
+        <div class="space-y-8 text-center lg:text-left">
+          <!-- Status indicator -->
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent/5 border border-accent/15 animate-fade-in">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
+            </span>
+            <span class="text-xs font-medium text-accent tracking-wide">Open to opportunities</span>
+          </div>
+
+          <!-- Name & Title -->
+          <div class="space-y-4">
+            <h1 class="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight animate-fade-in-up">
+              Arijeet<br>
+              <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent via-accent to-accent-secondary">Ganguli</span>
+            </h1>
+            <p class="text-lg sm:text-xl text-muted font-light animate-fade-in-up delay-100">
+              Data Engineering Manager
+            </p>
+            <p class="text-base text-muted/70 font-light max-w-md mx-auto lg:mx-0 animate-fade-in-up delay-200">
+              I build scalable data platforms that power analytics, ML, and business-critical reporting at enterprise scale.
+            </p>
+          </div>
+
+          <!-- CTAs -->
+          <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4 animate-fade-in-up delay-300">
+            <a href="#projects" class="group inline-flex items-center gap-2.5 px-7 py-3.5 bg-accent hover:bg-accent/90 text-white text-sm font-medium rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-accent/20 hover:-translate-y-0.5">
+              View Projects
+              <svg class="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+            </a>
+            <a href="#contact" class="inline-flex items-center gap-2 px-7 py-3.5 border border-white/10 hover:border-white/20 text-text text-sm font-medium rounded-xl transition-all duration-200 hover:bg-white/[0.03]">
+              Get in Touch
+            </a>
+          </div>
+
+          <!-- Metrics strip -->
+          <div class="flex flex-wrap items-center justify-center lg:justify-start gap-8 pt-4 animate-fade-in-up delay-400">
+            <div class="text-center lg:text-left">
+              <p class="text-2xl font-bold text-text">120<span class="text-accent">+</span></p>
+              <p class="text-xs text-muted mt-1 tracking-wide">Integrations</p>
+            </div>
+            <div class="w-px h-10 bg-white/10"></div>
+            <div class="text-center lg:text-left">
+              <p class="text-2xl font-bold text-text">20<span class="text-accent-secondary">GB</span></p>
+              <p class="text-xs text-muted mt-1 tracking-wide">Daily Processing</p>
+            </div>
+            <div class="w-px h-10 bg-white/10"></div>
+            <div class="text-center lg:text-left">
+              <p class="text-2xl font-bold text-text">99.9<span class="text-accent">%</span></p>
+              <p class="text-xs text-muted mt-1 tracking-wide">Uptime</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Pipeline SVG -->
+        <div class="hidden lg:flex items-center justify-center animate-fade-in delay-300">
+          <svg viewBox="0 0 420 430" class="w-full max-w-[520px]" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="line-v" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#2F80ED" stop-opacity="0.5"/>
+                <stop offset="100%" stop-color="#27D1E7" stop-opacity="0.5"/>
+              </linearGradient>
+              <filter id="hero-glow">
+                <feGaussianBlur stdDeviation="4" result="b"/>
+                <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
+
+            <!-- Connection curves -->
+            <path d="M90 78 C90 128, 168 128, 168 170" stroke="#2F80ED" stroke-width="1" fill="none" opacity="0.3"/>
+            <path d="M210 78 C210 108, 210 132, 210 170" stroke="url(#line-v)" stroke-width="1" fill="none" opacity="0.35"/>
+            <path d="M330 78 C330 128, 252 128, 252 170" stroke="#27D1E7" stroke-width="1" fill="none" opacity="0.3"/>
+            <path d="M210 228 L210 278" stroke="url(#line-v)" stroke-width="1" fill="none" opacity="0.35"/>
+            <path d="M168 336 C130 342, 92 354, 92 375" stroke="#2F80ED" stroke-width="1" fill="none" opacity="0.25"/>
+            <path d="M210 336 L210 375" stroke="url(#line-v)" stroke-width="1" fill="none" opacity="0.25"/>
+            <path d="M252 336 C290 342, 328 354, 328 375" stroke="#27D1E7" stroke-width="1" fill="none" opacity="0.25"/>
+
+            <!-- Animated particles -->
+            <circle r="2.5" fill="#2F80ED" filter="url(#hero-glow)">
+              <animateMotion dur="3s" repeatCount="indefinite" path="M90 78 C90 128, 168 128, 168 170"/>
+              <animate attributeName="opacity" values="0;0.9;0.9;0" dur="3s" repeatCount="indefinite"/>
+            </circle>
+            <circle r="2.5" fill="#27D1E7" filter="url(#hero-glow)">
+              <animateMotion dur="3.5s" repeatCount="indefinite" path="M330 78 C330 128, 252 128, 252 170" begin="0.5s"/>
+              <animate attributeName="opacity" values="0;0.9;0.9;0" dur="3.5s" repeatCount="indefinite" begin="0.5s"/>
+            </circle>
+            <circle r="2" fill="#2F80ED" filter="url(#hero-glow)">
+              <animateMotion dur="2s" repeatCount="indefinite" path="M210 228 L210 278" begin="1s"/>
+              <animate attributeName="opacity" values="0;0.8;0.8;0" dur="2s" repeatCount="indefinite" begin="1s"/>
+            </circle>
+            <circle r="2" fill="#27D1E7" filter="url(#hero-glow)">
+              <animateMotion dur="2.5s" repeatCount="indefinite" path="M252 336 C290 342, 328 354, 328 375" begin="2s"/>
+              <animate attributeName="opacity" values="0;0.8;0.8;0" dur="2.5s" repeatCount="indefinite" begin="2s"/>
+            </circle>
+            <circle r="1.5" fill="#2F80ED">
+              <animateMotion dur="2.8s" repeatCount="indefinite" path="M210 78 C210 108, 210 132, 210 170" begin="1.5s"/>
+              <animate attributeName="opacity" values="0;0.6;0.6;0" dur="2.8s" repeatCount="indefinite" begin="1.5s"/>
+            </circle>
+
+            <!-- ROW 1: Sources -->
+            <rect x="48" y="40" width="84" height="38" rx="19" fill="#121A26" stroke="#2F80ED" stroke-width="0.75"/>
+            <text x="90" y="64" text-anchor="middle" fill="#E6EDF3" font-size="12" font-weight="500" font-family="Inter, sans-serif">APIs</text>
+
+            <rect x="168" y="40" width="84" height="38" rx="19" fill="#121A26" stroke="#E6EDF3" stroke-width="0.4" opacity="0.8"/>
+            <text x="210" y="64" text-anchor="middle" fill="#AAB4C2" font-size="12" font-weight="500" font-family="Inter, sans-serif">Streams</text>
+
+            <rect x="288" y="40" width="84" height="38" rx="19" fill="#121A26" stroke="#27D1E7" stroke-width="0.75"/>
+            <text x="330" y="64" text-anchor="middle" fill="#E6EDF3" font-size="12" font-weight="500" font-family="Inter, sans-serif">Databases</text>
+
+            <!-- ROW 2: Transform -->
+            <rect x="130" y="170" width="160" height="58" rx="12" fill="#121A26" stroke="#2F80ED" stroke-width="1"/>
+            <line x1="148" y1="198" x2="272" y2="198" stroke="#2F80ED" stroke-width="0.5" opacity="0.2"/>
+            <text x="210" y="195" text-anchor="middle" fill="#E6EDF3" font-size="14" font-weight="600" font-family="Inter, sans-serif">Transform</text>
+            <text x="210" y="215" text-anchor="middle" fill="#AAB4C2" font-size="10" font-family="Inter, sans-serif">dbt  ·  Airflow  ·  Spark</text>
+
+            <!-- ROW 3: Data Lake -->
+            <rect x="130" y="278" width="160" height="58" rx="12" fill="#121A26" stroke="#27D1E7" stroke-width="1"/>
+            <line x1="148" y1="306" x2="272" y2="306" stroke="#27D1E7" stroke-width="0.5" opacity="0.2"/>
+            <text x="210" y="303" text-anchor="middle" fill="#E6EDF3" font-size="14" font-weight="600" font-family="Inter, sans-serif">Data Lake</text>
+            <text x="210" y="323" text-anchor="middle" fill="#AAB4C2" font-size="10" font-family="Inter, sans-serif">S3  ·  Iceberg</text>
+
+            <!-- ROW 4: Outputs -->
+            <rect x="48" y="375" width="84" height="34" rx="17" fill="#121A26" stroke="#2F80ED" stroke-width="0.5" opacity="0.8"/>
+            <text x="90" y="396" text-anchor="middle" fill="#AAB4C2" font-size="11" font-weight="400" font-family="Inter, sans-serif">Analytics</text>
+
+            <rect x="168" y="375" width="84" height="34" rx="17" fill="#121A26" stroke="#E6EDF3" stroke-width="0.3" opacity="0.7"/>
+            <text x="210" y="396" text-anchor="middle" fill="#AAB4C2" font-size="11" font-weight="400" font-family="Inter, sans-serif">BI</text>
+
+            <rect x="288" y="375" width="84" height="34" rx="17" fill="#121A26" stroke="#27D1E7" stroke-width="0.5" opacity="0.8"/>
+            <text x="330" y="396" text-anchor="middle" fill="#AAB4C2" font-size="11" font-weight="400" font-family="Inter, sans-serif">ML</text>
+
+            <!-- Stage labels (rotated, far left, aligned to row midpoints) -->
+            <text fill="#AAB4C2" font-size="7" font-family="Inter, sans-serif" opacity="0.35" letter-spacing="1.5" text-anchor="middle" transform="translate(8, 59) rotate(-90)">INGEST</text>
+            <text fill="#AAB4C2" font-size="7" font-family="Inter, sans-serif" opacity="0.35" letter-spacing="1.5" text-anchor="middle" transform="translate(8, 199) rotate(-90)">PROCESS</text>
+            <text fill="#AAB4C2" font-size="7" font-family="Inter, sans-serif" opacity="0.35" letter-spacing="1.5" text-anchor="middle" transform="translate(8, 307) rotate(-90)">STORE</text>
+            <text fill="#AAB4C2" font-size="7" font-family="Inter, sans-serif" opacity="0.35" letter-spacing="1.5" text-anchor="middle" transform="translate(8, 392) rotate(-90)">SERVE</text>
+          </svg>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2">
+      <div class="hero-scroll-indicator">
+        <div class="hero-scroll-dot"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- ABOUT                                       -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section id="about" class="py-24 sm:py-32">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-5 gap-12 lg:gap-16 items-start">
+        <div class="lg:col-span-2">
+          <p class="text-accent font-mono text-sm tracking-wider uppercase mb-2">About</p>
+          <h2 class="text-3xl sm:text-4xl font-bold">Building the<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-accent-secondary">Data Foundation</span></h2>
+        </div>
+        <div class="lg:col-span-3 space-y-6">
+          <p class="text-muted text-lg leading-relaxed">
+            Data Engineering Manager with deep expertise in designing and operating enterprise-scale data platforms. I lead teams that build reliable, cost-efficient data infrastructure powering analytics, machine learning, and business-critical reporting.
+          </p>
+          <div class="grid sm:grid-cols-2 gap-6 pt-4">
+            <div class="group p-5 rounded-xl bg-bg-secondary/50 border border-white/5 hover:border-accent/20 transition-all duration-300">
+              <div class="flex items-center gap-3 mb-3">
+                <div class="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">
+                  <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                </div>
+                <h3 class="text-sm font-semibold text-text">Platform Architecture</h3>
+              </div>
+              <p class="text-sm text-muted leading-relaxed">End-to-end data platform design from ingestion to serving layers, built for scale and reliability.</p>
+            </div>
+            <div class="group p-5 rounded-xl bg-bg-secondary/50 border border-white/5 hover:border-accent/20 transition-all duration-300">
+              <div class="flex items-center gap-3 mb-3">
+                <div class="w-8 h-8 rounded-lg bg-accent-secondary/10 flex items-center justify-center">
+                  <svg class="w-4 h-4 text-accent-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"/></svg>
+                </div>
+                <h3 class="text-sm font-semibold text-text">Large-Scale Ingestion</h3>
+              </div>
+              <p class="text-sm text-muted leading-relaxed">High-throughput data ingestion pipelines processing billions of records across diverse sources.</p>
+            </div>
+            <div class="group p-5 rounded-xl bg-bg-secondary/50 border border-white/5 hover:border-accent/20 transition-all duration-300">
+              <div class="flex items-center gap-3 mb-3">
+                <div class="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">
+                  <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                </div>
+                <h3 class="text-sm font-semibold text-text">Data Quality</h3>
+              </div>
+              <p class="text-sm text-muted leading-relaxed">Automated quality frameworks with reconciliation, anomaly detection, and data observability.</p>
+            </div>
+            <div class="group p-5 rounded-xl bg-bg-secondary/50 border border-white/5 hover:border-accent/20 transition-all duration-300">
+              <div class="flex items-center gap-3 mb-3">
+                <div class="w-8 h-8 rounded-lg bg-accent-secondary/10 flex items-center justify-center">
+                  <svg class="w-4 h-4 text-accent-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <h3 class="text-sm font-semibold text-text">Cost Optimization</h3>
+              </div>
+              <p class="text-sm text-muted leading-relaxed">Cloud-native architectures designed for cost efficiency without compromising performance.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- PROJECTS                                    -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section id="projects" class="py-24 sm:py-32 bg-bg-secondary/30">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <p class="text-accent font-mono text-sm tracking-wider uppercase mb-2">Projects</p>
+        <h2 class="text-3xl sm:text-4xl font-bold">Featured Work</h2>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Project 1: Datafeeds Platform -->
+        <article class="group relative p-6 rounded-2xl bg-bg border border-white/5 hover:border-accent/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-accent/5">
+          <div class="absolute inset-0 rounded-2xl bg-gradient-to-b from-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <div class="relative">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
+                <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg>
+              </div>
+              <h3 class="text-lg font-semibold text-text">Datafeeds Platform</h3>
+            </div>
+            <p class="text-sm text-muted leading-relaxed mb-6">
+              Enterprise data integration platform managing 120+ feed integrations with automated ingestion, validation, and snapshot-based historical reporting.
+            </p>
+            <div class="grid grid-cols-2 gap-3 mb-6">
+              <div class="text-center p-3 rounded-lg bg-bg-secondary/50">
+                <p class="text-xl font-bold text-accent">120+</p>
+                <p class="text-xs text-muted mt-1">Integrations</p>
+              </div>
+              <div class="text-center p-3 rounded-lg bg-bg-secondary/50">
+                <p class="text-xl font-bold text-accent-secondary">20GB</p>
+                <p class="text-xs text-muted mt-1">Daily Processing</p>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <span class="px-2.5 py-1 text-xs rounded-md bg-accent/10 text-accent border border-accent/20">Python</span>
+              <span class="px-2.5 py-1 text-xs rounded-md bg-accent/10 text-accent border border-accent/20">Airflow</span>
+              <span class="px-2.5 py-1 text-xs rounded-md bg-accent/10 text-accent border border-accent/20">S3</span>
+              <span class="px-2.5 py-1 text-xs rounded-md bg-accent/10 text-accent border border-accent/20">Snowflake</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Project 2: ELT Framework -->
+        <article class="group relative p-6 rounded-2xl bg-bg border border-white/5 hover:border-accent-secondary/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-accent-secondary/5">
+          <div class="absolute inset-0 rounded-2xl bg-gradient-to-b from-accent-secondary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <div class="relative">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 rounded-xl bg-accent-secondary/10 flex items-center justify-center">
+                <svg class="w-5 h-5 text-accent-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+              </div>
+              <h3 class="text-lg font-semibold text-text">ELT Framework</h3>
+            </div>
+            <p class="text-sm text-muted leading-relaxed mb-6">
+              Scalable Extract-Load-Transform framework supporting multi-source ingestion with configurable transformations, schema evolution, and lineage tracking.
+            </p>
+            <div class="grid grid-cols-2 gap-3 mb-6">
+              <div class="text-center p-3 rounded-lg bg-bg-secondary/50">
+                <p class="text-xl font-bold text-accent-secondary">50+</p>
+                <p class="text-xs text-muted mt-1">Data Sources</p>
+              </div>
+              <div class="text-center p-3 rounded-lg bg-bg-secondary/50">
+                <p class="text-xl font-bold text-accent">99.9%</p>
+                <p class="text-xs text-muted mt-1">Uptime</p>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <span class="px-2.5 py-1 text-xs rounded-md bg-accent-secondary/10 text-accent-secondary border border-accent-secondary/20">dbt</span>
+              <span class="px-2.5 py-1 text-xs rounded-md bg-accent-secondary/10 text-accent-secondary border border-accent-secondary/20">Spark</span>
+              <span class="px-2.5 py-1 text-xs rounded-md bg-accent-secondary/10 text-accent-secondary border border-accent-secondary/20">Iceberg</span>
+              <span class="px-2.5 py-1 text-xs rounded-md bg-accent-secondary/10 text-accent-secondary border border-accent-secondary/20">Kafka</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Project 3: Data Quality Framework -->
+        <article class="group relative p-6 rounded-2xl bg-bg border border-white/5 hover:border-accent/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-accent/5">
+          <div class="absolute inset-0 rounded-2xl bg-gradient-to-b from-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <div class="relative">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
+                <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </div>
+              <h3 class="text-lg font-semibold text-text">Data Quality Framework</h3>
+            </div>
+            <p class="text-sm text-muted leading-relaxed mb-6">
+              Automated data quality system with reconciliation engine, statistical anomaly detection, and real-time alerting across all critical data pipelines.
+            </p>
+            <div class="grid grid-cols-2 gap-3 mb-6">
+              <div class="text-center p-3 rounded-lg bg-bg-secondary/50">
+                <p class="text-xl font-bold text-accent">500+</p>
+                <p class="text-xs text-muted mt-1">Quality Rules</p>
+              </div>
+              <div class="text-center p-3 rounded-lg bg-bg-secondary/50">
+                <p class="text-xl font-bold text-accent-secondary">95%</p>
+                <p class="text-xs text-muted mt-1">Issue Detection</p>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <span class="px-2.5 py-1 text-xs rounded-md bg-accent/10 text-accent border border-accent/20">Python</span>
+              <span class="px-2.5 py-1 text-xs rounded-md bg-accent/10 text-accent border border-accent/20">Great Expectations</span>
+              <span class="px-2.5 py-1 text-xs rounded-md bg-accent/10 text-accent border border-accent/20">SQL</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- ARCHITECTURE                                -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section id="architecture" class="py-24 sm:py-32">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <p class="text-accent font-mono text-sm tracking-wider uppercase mb-2">Architecture</p>
+        <h2 class="text-3xl sm:text-4xl font-bold">Data Platform Overview</h2>
+      </div>
+
+      <!-- Architecture Diagram -->
+      <div class="relative overflow-x-auto pb-4">
+        <div class="min-w-[700px]">
+          <svg viewBox="0 0 880 260" class="w-full" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <filter id="a-glow" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="4" result="b"/>
+                <feComposite in="SourceGraphic" in2="b" operator="over"/>
+              </filter>
+              <linearGradient id="a-grad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#2F80ED" stop-opacity="0.4"/>
+                <stop offset="100%" stop-color="#27D1E7" stop-opacity="0.4"/>
+              </linearGradient>
+            </defs>
+
+            <!-- Stage column backgrounds -->
+            <rect x="10" y="38" width="190" height="212" rx="12" fill="#121A26" opacity="0.3"/>
+            <rect x="230" y="38" width="190" height="212" rx="12" fill="#121A26" opacity="0.2"/>
+            <rect x="450" y="38" width="190" height="212" rx="12" fill="#121A26" opacity="0.3"/>
+            <rect x="670" y="38" width="200" height="212" rx="12" fill="#121A26" opacity="0.2"/>
+
+            <!-- Stage labels -->
+            <text x="105" y="26" text-anchor="middle" fill="#AAB4C2" font-size="10" font-family="Inter, sans-serif" font-weight="600" letter-spacing="2" opacity="0.5">INGESTION</text>
+            <text x="325" y="26" text-anchor="middle" fill="#AAB4C2" font-size="10" font-family="Inter, sans-serif" font-weight="600" letter-spacing="2" opacity="0.5">STAGING</text>
+            <text x="545" y="26" text-anchor="middle" fill="#AAB4C2" font-size="10" font-family="Inter, sans-serif" font-weight="600" letter-spacing="2" opacity="0.5">TRANSFORM</text>
+            <text x="770" y="26" text-anchor="middle" fill="#AAB4C2" font-size="10" font-family="Inter, sans-serif" font-weight="600" letter-spacing="2" opacity="0.5">SERVING</text>
+
+            <!-- ── INGESTION NODES ── -->
+            <rect x="30" y="54" width="150" height="36" rx="18" fill="#0B0F14" stroke="#2F80ED" stroke-width="0.75"/>
+            <text x="105" y="77" text-anchor="middle" fill="#E6EDF3" font-size="12" font-weight="500" font-family="Inter, sans-serif">APIs</text>
+
+            <rect x="30" y="102" width="150" height="36" rx="18" fill="#0B0F14" stroke="#27D1E7" stroke-width="0.75"/>
+            <text x="105" y="125" text-anchor="middle" fill="#E6EDF3" font-size="12" font-weight="500" font-family="Inter, sans-serif">Databases</text>
+
+            <rect x="30" y="150" width="150" height="36" rx="18" fill="#0B0F14" stroke="#2F80ED" stroke-width="0.5" opacity="0.85"/>
+            <text x="105" y="173" text-anchor="middle" fill="#AAB4C2" font-size="12" font-weight="500" font-family="Inter, sans-serif">Files</text>
+
+            <rect x="30" y="198" width="150" height="36" rx="18" fill="#0B0F14" stroke="#27D1E7" stroke-width="0.5" opacity="0.85"/>
+            <text x="105" y="221" text-anchor="middle" fill="#AAB4C2" font-size="12" font-weight="500" font-family="Inter, sans-serif">Streams</text>
+
+            <!-- ── CONNECTING LINES: Ingestion → Staging ── -->
+            <path d="M180 72 C205 72, 215 85, 250 85" stroke="#2F80ED" stroke-width="0.75" fill="none" opacity="0.3"/>
+            <path d="M180 120 C205 120, 215 120, 250 120" stroke="#27D1E7" stroke-width="0.75" fill="none" opacity="0.3"/>
+            <path d="M180 168 C205 168, 215 152, 250 152" stroke="#2F80ED" stroke-width="0.75" fill="none" opacity="0.2"/>
+            <path d="M180 216 C205 216, 215 188, 250 188" stroke="#27D1E7" stroke-width="0.75" fill="none" opacity="0.2"/>
+
+            <!-- ── STAGING NODES ── -->
+            <rect x="250" y="60" width="150" height="44" rx="10" fill="#0B0F14" stroke="#2F80ED" stroke-width="1"/>
+            <text x="325" y="80" text-anchor="middle" fill="#E6EDF3" font-size="13" font-weight="600" font-family="Inter, sans-serif">S3 Raw</text>
+            <text x="325" y="95" text-anchor="middle" fill="#AAB4C2" font-size="9" font-family="Inter, sans-serif">Landing Zone</text>
+
+            <rect x="250" y="118" width="150" height="44" rx="10" fill="#0B0F14" stroke="#2F80ED" stroke-width="0.75"/>
+            <text x="325" y="138" text-anchor="middle" fill="#E6EDF3" font-size="13" font-weight="500" font-family="Inter, sans-serif">Airflow</text>
+            <text x="325" y="153" text-anchor="middle" fill="#AAB4C2" font-size="9" font-family="Inter, sans-serif">Orchestration</text>
+
+            <rect x="250" y="176" width="150" height="44" rx="10" fill="#0B0F14" stroke="#27D1E7" stroke-width="0.75"/>
+            <text x="325" y="196" text-anchor="middle" fill="#E6EDF3" font-size="13" font-weight="500" font-family="Inter, sans-serif">Quality Gate</text>
+            <text x="325" y="211" text-anchor="middle" fill="#AAB4C2" font-size="9" font-family="Inter, sans-serif">Validation</text>
+
+            <!-- ── CONNECTING LINES: Staging → Transform ── -->
+            <path d="M400 82 C425 82, 435 85, 470 85" stroke="#2F80ED" stroke-width="0.75" fill="none" opacity="0.3"/>
+            <path d="M400 140 C425 140, 435 137, 470 137" stroke="#2F80ED" stroke-width="0.75" fill="none" opacity="0.25"/>
+            <path d="M400 198 C425 198, 435 188, 470 188" stroke="#27D1E7" stroke-width="0.75" fill="none" opacity="0.25"/>
+
+            <!-- ── TRANSFORM NODES ── -->
+            <rect x="470" y="60" width="150" height="44" rx="10" fill="#0B0F14" stroke="#2F80ED" stroke-width="1"/>
+            <text x="545" y="80" text-anchor="middle" fill="#E6EDF3" font-size="13" font-weight="600" font-family="Inter, sans-serif">dbt</text>
+            <text x="545" y="95" text-anchor="middle" fill="#AAB4C2" font-size="9" font-family="Inter, sans-serif">SQL Models</text>
+
+            <rect x="470" y="118" width="150" height="44" rx="10" fill="#0B0F14" stroke="#27D1E7" stroke-width="0.75"/>
+            <text x="545" y="138" text-anchor="middle" fill="#E6EDF3" font-size="13" font-weight="500" font-family="Inter, sans-serif">Iceberg</text>
+            <text x="545" y="153" text-anchor="middle" fill="#AAB4C2" font-size="9" font-family="Inter, sans-serif">Table Format</text>
+
+            <rect x="470" y="176" width="150" height="44" rx="10" fill="#0B0F14" stroke="#2F80ED" stroke-width="0.5" opacity="0.85"/>
+            <text x="545" y="196" text-anchor="middle" fill="#AAB4C2" font-size="13" font-weight="500" font-family="Inter, sans-serif">Spark</text>
+            <text x="545" y="211" text-anchor="middle" fill="#AAB4C2" font-size="9" font-family="Inter, sans-serif" opacity="0.6">Compute</text>
+
+            <!-- ── CONNECTING LINES: Transform → Serving ── -->
+            <path d="M620 82 C645 82, 655 80, 690 80" stroke="#2F80ED" stroke-width="0.75" fill="none" opacity="0.3"/>
+            <path d="M620 140 C645 140, 655 130, 690 130" stroke="#27D1E7" stroke-width="0.75" fill="none" opacity="0.25"/>
+            <path d="M620 198 C645 198, 655 180, 690 180" stroke="#2F80ED" stroke-width="0.75" fill="none" opacity="0.2"/>
+
+            <!-- ── SERVING NODES ── -->
+            <rect x="690" y="56" width="160" height="44" rx="10" fill="#0B0F14" stroke="#2F80ED" stroke-width="1"/>
+            <text x="770" y="76" text-anchor="middle" fill="#E6EDF3" font-size="13" font-weight="600" font-family="Inter, sans-serif">Warehouse</text>
+            <text x="770" y="91" text-anchor="middle" fill="#AAB4C2" font-size="9" font-family="Inter, sans-serif">Snowflake</text>
+
+            <rect x="690" y="112" width="160" height="44" rx="10" fill="#0B0F14" stroke="#27D1E7" stroke-width="0.75"/>
+            <text x="770" y="132" text-anchor="middle" fill="#E6EDF3" font-size="13" font-weight="500" font-family="Inter, sans-serif">Analytics</text>
+            <text x="770" y="147" text-anchor="middle" fill="#AAB4C2" font-size="9" font-family="Inter, sans-serif">Dashboards</text>
+
+            <rect x="690" y="168" width="160" height="44" rx="10" fill="#0B0F14" stroke="#2F80ED" stroke-width="0.5" opacity="0.85"/>
+            <text x="770" y="188" text-anchor="middle" fill="#AAB4C2" font-size="13" font-weight="500" font-family="Inter, sans-serif">ML Platform</text>
+            <text x="770" y="203" text-anchor="middle" fill="#AAB4C2" font-size="9" font-family="Inter, sans-serif" opacity="0.6">Feature Store</text>
+
+            <!-- Animated flow dot across full pipeline -->
+            <circle r="3" fill="#2F80ED" filter="url(#a-glow)">
+              <animateMotion dur="6s" repeatCount="indefinite" path="M105 72 L250 82 L400 82 L470 82 L620 82 L770 76"/>
+              <animate attributeName="opacity" values="0;0.9;0.9;0.9;0.9;0" dur="6s" repeatCount="indefinite"/>
+            </circle>
+            <circle r="2.5" fill="#27D1E7" filter="url(#a-glow)">
+              <animateMotion dur="7s" repeatCount="indefinite" path="M105 120 L250 140 L400 140 L470 140 L620 140 L770 132" begin="2s"/>
+              <animate attributeName="opacity" values="0;0.8;0.8;0.8;0.8;0" dur="7s" repeatCount="indefinite" begin="2s"/>
+            </circle>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Architecture highlights -->
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-12">
+        <div class="p-4 rounded-xl bg-bg-secondary/50 border border-white/5 text-center">
+          <p class="text-2xl font-bold text-accent">4</p>
+          <p class="text-xs text-muted mt-1">Pipeline Stages</p>
+        </div>
+        <div class="p-4 rounded-xl bg-bg-secondary/50 border border-white/5 text-center">
+          <p class="text-2xl font-bold text-accent-secondary">Sub-sec</p>
+          <p class="text-xs text-muted mt-1">Query Latency</p>
+        </div>
+        <div class="p-4 rounded-xl bg-bg-secondary/50 border border-white/5 text-center">
+          <p class="text-2xl font-bold text-accent">PB-scale</p>
+          <p class="text-xs text-muted mt-1">Storage Capacity</p>
+        </div>
+        <div class="p-4 rounded-xl bg-bg-secondary/50 border border-white/5 text-center">
+          <p class="text-2xl font-bold text-accent-secondary">24/7</p>
+          <p class="text-xs text-muted mt-1">Monitoring</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- SKILLS                                      -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section id="skills" class="py-24 sm:py-32 bg-bg-secondary/30">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <p class="text-accent font-mono text-sm tracking-wider uppercase mb-2">Skills</p>
+        <h2 class="text-3xl sm:text-4xl font-bold">Technical Expertise</h2>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-8">
+        <!-- Data Engineering -->
+        <div class="space-y-4">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
+              <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/></svg>
+            </div>
+            <h3 class="text-lg font-semibold">Data Engineering</h3>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <span class="skill-chip">Python</span>
+            <span class="skill-chip">SQL</span>
+            <span class="skill-chip">Apache Spark</span>
+            <span class="skill-chip">Apache Airflow</span>
+            <span class="skill-chip">dbt</span>
+            <span class="skill-chip">Apache Kafka</span>
+            <span class="skill-chip">Apache Iceberg</span>
+            <span class="skill-chip">ETL/ELT Pipelines</span>
+            <span class="skill-chip">Data Modeling</span>
+            <span class="skill-chip">Data Quality</span>
+            <span class="skill-chip">Stream Processing</span>
+          </div>
+        </div>
+
+        <!-- Cloud -->
+        <div class="space-y-4">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 rounded-xl bg-accent-secondary/10 flex items-center justify-center">
+              <svg class="w-5 h-5 text-accent-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/></svg>
+            </div>
+            <h3 class="text-lg font-semibold">Cloud & Infrastructure</h3>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <span class="skill-chip-alt">AWS</span>
+            <span class="skill-chip-alt">S3</span>
+            <span class="skill-chip-alt">Redshift</span>
+            <span class="skill-chip-alt">Glue</span>
+            <span class="skill-chip-alt">Lambda</span>
+            <span class="skill-chip-alt">EMR</span>
+            <span class="skill-chip-alt">Snowflake</span>
+            <span class="skill-chip-alt">Terraform</span>
+            <span class="skill-chip-alt">Docker</span>
+            <span class="skill-chip-alt">Kubernetes</span>
+            <span class="skill-chip-alt">CI/CD</span>
+          </div>
+        </div>
+
+        <!-- Tools -->
+        <div class="space-y-4">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
+              <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            </div>
+            <h3 class="text-lg font-semibold">Tools & Practices</h3>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <span class="skill-chip">Git</span>
+            <span class="skill-chip">GitHub Actions</span>
+            <span class="skill-chip">Great Expectations</span>
+            <span class="skill-chip">DataDog</span>
+            <span class="skill-chip">Grafana</span>
+            <span class="skill-chip">Jira</span>
+            <span class="skill-chip">Agile/Scrum</span>
+            <span class="skill-chip">Data Governance</span>
+            <span class="skill-chip">Cost Optimization</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- CONTACT                                     -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section id="contact" class="py-24 sm:py-32">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-2xl mx-auto text-center">
+        <p class="text-accent font-mono text-sm tracking-wider uppercase mb-2">Contact</p>
+        <h2 class="text-3xl sm:text-4xl font-bold mb-4">Let's Connect</h2>
+        <p class="text-muted text-lg mb-10">
+          Interested in discussing data engineering, platform architecture, or potential collaborations? Reach out.
+        </p>
+
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <!-- Email -->
+          <a href="mailto:arijeet.ganguli@gmail.com" class="group flex items-center gap-3 px-6 py-3.5 rounded-xl bg-bg-secondary border border-white/5 hover:border-accent/30 transition-all duration-300 w-full sm:w-auto">
+            <div class="w-9 h-9 rounded-lg bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
+              <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            </div>
+            <div class="text-left">
+              <p class="text-xs text-muted">Email</p>
+              <p class="text-sm text-text">arijeet.ganguli@gmail.com</p>
+            </div>
+          </a>
+
+          <!-- GitHub -->
+          <a href="https://github.com/arijeetganguli" target="_blank" rel="noopener noreferrer" class="group flex items-center gap-3 px-6 py-3.5 rounded-xl bg-bg-secondary border border-white/5 hover:border-accent-secondary/30 transition-all duration-300 w-full sm:w-auto">
+            <div class="w-9 h-9 rounded-lg bg-accent-secondary/10 flex items-center justify-center group-hover:bg-accent-secondary/20 transition-colors">
+              <svg class="w-4 h-4 text-accent-secondary" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+            </div>
+            <div class="text-left">
+              <p class="text-xs text-muted">GitHub</p>
+              <p class="text-sm text-text">arijeetganguli</p>
+            </div>
+          </a>
+
+          <!-- LinkedIn -->
+          <a href="https://linkedin.com/in/arijeetganguli" target="_blank" rel="noopener noreferrer" class="group flex items-center gap-3 px-6 py-3.5 rounded-xl bg-bg-secondary border border-white/5 hover:border-accent/30 transition-all duration-300 w-full sm:w-auto">
+            <div class="w-9 h-9 rounded-lg bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
+              <svg class="w-4 h-4 text-accent" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            </div>
+            <div class="text-left">
+              <p class="text-xs text-muted">LinkedIn</p>
+              <p class="text-sm text-text">arijeetganguli</p>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- FOOTER                                      -->
+  <!-- ═══════════════════════════════════════════ -->
+  <footer class="py-8 border-t border-white/5">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <p class="text-sm text-muted">&copy; 2026 Arijeet Ganguli. All rights reserved.</p>
+        <div class="flex items-center gap-6">
+          <a href="https://github.com/arijeetganguli" target="_blank" rel="noopener noreferrer" class="text-muted hover:text-text transition-colors">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          </a>
+          <a href="https://linkedin.com/in/arijeetganguli" target="_blank" rel="noopener noreferrer" class="text-muted hover:text-text transition-colors">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
