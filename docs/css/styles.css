@@ -1,0 +1,182 @@
+/* ═══════════════════════════════════════════════════
+   Custom Styles — Arijeet Ganguli Portfolio
+   ═══════════════════════════════════════════════════ */
+
+/* ── Background Grid Pattern ── */
+.bg-grid-pattern {
+  background-image:
+    linear-gradient(rgba(230, 237, 243, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(230, 237, 243, 0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* ── Hero scroll indicator ── */
+.hero-scroll-indicator {
+  width: 20px;
+  height: 32px;
+  border-radius: 10px;
+  border: 1.5px solid rgba(170, 180, 194, 0.25);
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.hero-scroll-dot {
+  width: 3px;
+  height: 6px;
+  border-radius: 2px;
+  background: #AAB4C2;
+  margin-top: 6px;
+  animation: scroll-hint 2s ease-in-out infinite;
+}
+
+@keyframes scroll-hint {
+  0%   { opacity: 0.6; transform: translateY(0); }
+  50%  { opacity: 0.2; transform: translateY(10px); }
+  100% { opacity: 0.6; transform: translateY(0); }
+}
+
+/* ── Skill Chips ── */
+.skill-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.375rem 0.875rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #AAB4C2;
+  background: rgba(47, 128, 237, 0.06);
+  border: 1px solid rgba(47, 128, 237, 0.15);
+  border-radius: 9999px;
+  transition: all 0.2s ease;
+}
+
+.skill-chip:hover {
+  color: #E6EDF3;
+  background: rgba(47, 128, 237, 0.12);
+  border-color: rgba(47, 128, 237, 0.3);
+}
+
+.skill-chip-alt {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.375rem 0.875rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #AAB4C2;
+  background: rgba(39, 209, 231, 0.06);
+  border: 1px solid rgba(39, 209, 231, 0.15);
+  border-radius: 9999px;
+  transition: all 0.2s ease;
+}
+
+.skill-chip-alt:hover {
+  color: #E6EDF3;
+  background: rgba(39, 209, 231, 0.12);
+  border-color: rgba(39, 209, 231, 0.3);
+}
+
+/* ── Animations ── */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animation classes */
+.animate-fade-in {
+  animation: fade-in 0.6s ease-out both;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out both;
+}
+
+/* Animation delays */
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-400 { animation-delay: 0.4s; }
+.delay-500 { animation-delay: 0.5s; }
+
+/* ── Scroll Reveal ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Active nav link ── */
+.nav-link.active {
+  color: #E6EDF3;
+}
+
+.nav-link.active::after {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: #2F80ED;
+  border-radius: 1px;
+  margin-top: 2px;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0B0F14;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1a2332;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #243044;
+}
+
+/* ── Selection ── */
+::selection {
+  background: rgba(47, 128, 237, 0.3);
+  color: #E6EDF3;
+}
+
+/* ── Focus styles (accessibility) ── */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid #2F80ED;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ── Responsive architecture diagram scroll hint ── */
+@media (max-width: 768px) {
+  #architecture .relative::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 40px;
+    background: linear-gradient(to right, transparent, #0B0F14);
+    pointer-events: none;
+  }
+}
