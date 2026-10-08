@@ -23,15 +23,31 @@ const ACHIEVEMENTS = [
   { id: "history-detective", title: "History Detective", detail: "Recover a known-good version.", icon: "⌕" },
   { id: "git-survivor", title: "Git Survivor", detail: "Bring a production incident under control.", icon: "✳" },
   { id: "git-master", title: "Git Master", detail: "Complete every Git Quest mission.", icon: "★" },
+  { id: "sql-beginner", title: "Query Starter", detail: "Clear every SQL beginner mission.", icon: "01" },
+  { id: "sql-intermediate", title: "Join Investigator", detail: "Clear every SQL intermediate mission.", icon: "02" },
+  { id: "sql-advanced", title: "Window Specialist", detail: "Clear every SQL advanced mission.", icon: "03" },
+  { id: "sql-expert", title: "Database Expert", detail: "Clear every SQL expert mission.", icon: "04" },
+  { id: "sql-master", title: "SQL Detective", detail: "Complete all SQL Detective missions.", icon: "★" },
 ];
 
-function levelFor(xp: number) {
+function levelFor(xp: number, gameId: string) {
   const index = LEVELS.reduce((level, item, itemIndex) => (xp >= item.min ? itemIndex : level), 0);
-  return { ...LEVELS[index], number: index + 1, next: LEVELS[index + 1] };
+  const sqlRanks = ["Query Rookie", "Filter Finder", "Join Analyst", "Query Builder", "Data Detective", "SQL Master"];
+  return {
+    ...LEVELS[index],
+    name: gameId === "sql-detective" ? sqlRanks[index] : LEVELS[index].name,
+    number: index + 1,
+    next: LEVELS[index + 1],
+  };
 }
 
 function App() {
-  const game = getGame("git-quest");
+  const [activeGameId, setActiveGameId] = useState("git-quest");
+  const game = getGame(activeGameId);
+  const [progressByGame, setProgressByGame] = useState<Record<string, GameProgress>>(() => ({
+    "git-quest": createFreshProgress("git-quest"),
+    "sql-detective": createFreshProgress("sql-detective"),
+  }));
   const [progress, setProgress] = useState<GameProgress>(() => createFreshProgress("git-quest"));
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
@@ -42,10 +58,18 @@ function App() {
 
   useEffect(() => {
     let mounted = true;
-    localProgressStore.getGameProgress("git-quest")
-      .then((saved) => {
+    Promise.all(gameRegistry.filter((item) => item.status === "available").map(async (item) => ({
+      gameId: item.id,
+      saved: await localProgressStore.getGameProgress(item.id),
+    })))
+      .then((saves) => {
         if (!mounted) return;
-        if (saved) setProgress({ ...createFreshProgress("git-quest"), ...saved });
+        const loaded = Object.fromEntries(saves.map(({ gameId, saved }) => [
+          gameId,
+          saved ? { ...createFreshProgress(gameId), ...saved } : createFreshProgress(gameId),
+        ]));
+        setProgressByGame(loaded);
+        setProgress(loaded["git-quest"]);
         setIsLoading(false);
       })
       .catch((error: unknown) => {
@@ -58,14 +82,15 @@ function App() {
 
   const persist = useCallback((next: GameProgress) => {
     setProgress(next);
+    setProgressByGame((current) => ({ ...current, [next.gameId]: next }));
     setSaveError("");
     void localProgressStore.saveGameProgress(next).catch((error: unknown) => {
       setSaveError(error instanceof Error ? error.message : "Progress could not be saved to this browser.");
     });
   }, []);
 
-  if (!game) return <main className="fatal-message">Git Quest is missing from the game registry.</main>;
-  const currentLevel = levelFor(progress.xp);
+  if (!game) return <main className="fatal-message">{activeGameId} is missing from the game registry.</main>;
+  const currentLevel = levelFor(progress.xp, game.id);
   const mission = game.missions.find((item) => item.id === selectedMissionId) ??
     game.missions[Math.min(progress.currentMission, game.missions.length - 1)];
   const percentToNext = currentLevel.next
@@ -74,8 +99,10 @@ function App() {
 
   async function resetProgress() {
     try {
-      await localProgressStore.resetGameProgress("git-quest");
-      setProgress(createFreshProgress("git-quest"));
+      await localProgressStore.resetGameProgress(activeGameId);
+      const fresh = createFreshProgress(activeGameId);
+      setProgress(fresh);
+      setProgressByGame((current) => ({ ...current, [activeGameId]: fresh }));
       setSelectedMissionId("");
       setShowResetConfirm(false);
       setSaveError("");
@@ -85,8 +112,13 @@ function App() {
     }
   }
 
-  function startQuest() {
-    setSelectedMissionId(game!.missions[Math.min(progress.currentMission, game!.missions.length - 1)].id);
+  function startQuest(gameId = "git-quest") {
+    const nextGame = getGame(gameId);
+    if (!nextGame || nextGame.status !== "available") return;
+    const nextProgress = progressByGame[gameId] ?? createFreshProgress(gameId);
+    setActiveGameId(gameId);
+    setProgress(nextProgress);
+    setSelectedMissionId(nextGame.missions[Math.min(nextProgress.currentMission, nextGame.missions.length - 1)].id);
     setView("game");
   }
 
@@ -120,7 +152,8 @@ function App() {
           </button>
           <nav className="main-nav" aria-label="Main navigation">
             <button className={view === "home" ? "active" : ""} onClick={() => navigate("home")}>Explore</button>
-            <button className={view === "game" ? "active" : ""} onClick={startQuest}>Git Quest</button>
+            <button className={view === "game" && activeGameId === "git-quest" ? "active" : ""} onClick={() => startQuest("git-quest")}>Git Quest</button>
+            <button className={view === "game" && activeGameId === "sql-detective" ? "active" : ""} onClick={() => startQuest("sql-detective")}>SQL Detective</button>
             <button className={view === "progress" ? "active" : ""} onClick={() => navigate("progress")}>My progress</button>
           </nav>
           <button className="profile-pill" onClick={() => navigate("progress")} aria-label="View player progress">
@@ -138,7 +171,7 @@ function App() {
       )}
 
       {view === "home" && (
-        <HomePage games={gameRegistry} progress={progress} onStart={startQuest} />
+        <HomePage games={gameRegistry} progressByGame={progressByGame} progress={progressByGame["git-quest"]} onStart={startQuest} />
       )}
 
       {view === "game" && (
@@ -155,11 +188,12 @@ function App() {
 
       {view === "progress" && (
         <ProgressPage
+          game={game}
           progress={progress}
           missionCount={game.missions.length}
           percentToNext={percentToNext}
           currentLevel={currentLevel}
-          onStart={startQuest}
+          onStart={() => startQuest(activeGameId)}
           onReset={() => setShowResetConfirm(true)}
         />
       )}
@@ -187,11 +221,12 @@ function App() {
 
 interface HomePageProps {
   games: typeof gameRegistry;
+  progressByGame: Record<string, GameProgress>;
   progress: GameProgress;
-  onStart: () => void;
+  onStart: (gameId?: string) => void;
 }
 
-function HomePage({ games, progress, onStart }: HomePageProps) {
+function HomePage({ games, progressByGame, progress, onStart }: HomePageProps) {
   return (
     <main>
       <section className="hero-section page-wrap">
@@ -200,7 +235,7 @@ function HomePage({ games, progress, onStart }: HomePageProps) {
           <h1>Learn tech<br /><span className="hero-highlight">by playing.</span></h1>
           <p className="hero-description">Real engineering problems. Hands-on missions. No lectures before the action.</p>
           <div className="hero-actions">
-            <button className="button button-primary" onClick={onStart}>
+            <button className="button button-primary" onClick={() => onStart("git-quest")}>
               {progress.completedMissions.length ? "Continue playing" : "Start playing"} <ArrowRight size={16} />
             </button>
             <a className="button button-quiet" href="#games"><Gamepad2 size={16} /> Explore games</a>
@@ -242,15 +277,15 @@ function HomePage({ games, progress, onStart }: HomePageProps) {
         </div>
         <div className="game-grid">
           {games.map((game) => {
-            const isGitQuest = game.id === "git-quest";
-            const gameProgress = isGitQuest ? progress : undefined;
+            const gameProgress = progressByGame[game.id];
             const gamePercent = gameProgress && game.missions.length
               ? Math.round(gameProgress.completedMissions.length / game.missions.length * 100)
               : 0;
+            const isAvailable = game.status === "available";
             return (
-              <article className={`game-card ${isGitQuest ? "game-card-live" : "game-card-soon"}`} key={game.id}>
+              <article className={`game-card ${isAvailable ? "game-card-live" : "game-card-soon"}`} key={game.id}>
                 <div className="game-card-top">
-                  <span className={`game-icon ${isGitQuest ? "game-icon-live" : ""}`}>{game.icon}</span>
+                  <span className={`game-icon ${isAvailable ? "game-icon-live" : ""}`}>{game.icon}</span>
                   <span className={`status-chip ${game.status === "available" ? "status-live" : ""}`}>
                     <span className="online-dot" />{game.status === "available" ? "AVAILABLE" : "IN DEVELOPMENT"}
                   </span>
@@ -260,13 +295,13 @@ function HomePage({ games, progress, onStart }: HomePageProps) {
                 <p>{game.description}</p>
                 <div className="game-card-footer">
                   <span>{game.estimatedMinutes} MIN <span className="meta-divider">·</span> {game.missions.length || "SOON"} {game.missions.length ? "MISSIONS" : ""}</span>
-                  {isGitQuest ? (
-                    <button className="card-action" onClick={onStart} aria-label="Play Git Quest">
+                  {isAvailable ? (
+                    <button className="card-action" onClick={() => onStart(game.id)} aria-label={`Play ${game.title}`}>
                       {gameProgress?.completedMissions.length ? `${gamePercent}%` : "Play"} <ArrowRight size={15} />
                     </button>
                   ) : <span className="coming-label">COMING SOON</span>}
                 </div>
-                {isGitQuest && gamePercent > 0 && <div className="card-progress"><span style={{ width: `${gamePercent}%` }} /></div>}
+                {isAvailable && gamePercent > 0 && <div className="card-progress"><span style={{ width: `${gamePercent}%` }} /></div>}
               </article>
             );
           })}
@@ -283,6 +318,7 @@ function HomePage({ games, progress, onStart }: HomePageProps) {
 }
 
 interface ProgressPageProps {
+  game: NonNullable<ReturnType<typeof getGame>>;
   progress: GameProgress;
   missionCount: number;
   percentToNext: number;
@@ -291,13 +327,14 @@ interface ProgressPageProps {
   onReset: () => void;
 }
 
-function ProgressPage({ progress, missionCount, percentToNext, currentLevel, onStart, onReset }: ProgressPageProps) {
+function ProgressPage({ game, progress, missionCount, percentToNext, currentLevel, onStart, onReset }: ProgressPageProps) {
   const completion = Math.round((progress.completedMissions.length / missionCount) * 100);
+  const achievements = ACHIEVEMENTS.filter((item) => item.id.startsWith("sql-") === (game.id === "sql-detective"));
   return (
     <main className="page-wrap dashboard-page">
       <div className="dashboard-heading">
         <div><div className="eyebrow">PLAYER SAVE / LOCAL</div><h1>Your progress.</h1><p>Every mission cleared is a skill you can take to the real world.</p></div>
-        <button className="button button-quiet" onClick={onStart}>Resume Git Quest <ArrowRight size={15} /></button>
+        <button className="button button-quiet" onClick={onStart}>Resume {game.title} <ArrowRight size={15} /></button>
       </div>
       <section className="level-card">
         <div className="level-card-head">
@@ -314,9 +351,9 @@ function ProgressPage({ progress, missionCount, percentToNext, currentLevel, onS
         <StatCard icon={<Zap size={17} />} label="HINTS USED" value={`${progress.hintsUsed}`} />
       </div>
       <section className="achievement-section">
-        <div className="section-heading compact-heading"><div><div className="eyebrow">COLLECTED PROOF</div><h2>Achievements</h2></div><span className="tag-count">{progress.achievements.length} / {ACHIEVEMENTS.length} UNLOCKED</span></div>
+        <div className="section-heading compact-heading"><div><div className="eyebrow">COLLECTED PROOF</div><h2>Achievements</h2></div><span className="tag-count">{progress.achievements.length} / {achievements.length} UNLOCKED</span></div>
         <div className="achievement-grid">
-          {ACHIEVEMENTS.map((achievement) => {
+          {achievements.map((achievement) => {
             const unlocked = progress.achievements.includes(achievement.id);
             return <article className={`achievement-card ${unlocked ? "unlocked" : "locked"}`} key={achievement.id}>
               <div className="achievement-icon">{achievement.icon}</div><div><h3>{achievement.title}</h3><p>{achievement.detail}</p></div><span className="achievement-state">{unlocked ? "UNLOCKED" : "LOCKED"}</span>
@@ -325,9 +362,9 @@ function ProgressPage({ progress, missionCount, percentToNext, currentLevel, onS
         </div>
       </section>
       <section className="mission-progress-section">
-        <div className="section-heading compact-heading"><div><div className="eyebrow">GIT QUEST</div><h2>Mission log</h2></div><span className="tag-count">{completion}% COMPLETE</span></div>
+        <div className="section-heading compact-heading"><div><div className="eyebrow">{game.title.toUpperCase()}</div><h2>Mission log</h2></div><span className="tag-count">{completion}% COMPLETE</span></div>
         <div className="mission-log">
-          {getGame("git-quest")?.missions.map((mission, index) => {
+          {game.missions.map((mission, index) => {
             const done = progress.completedMissions.includes(mission.id);
             return <div className={`mission-log-row ${done ? "done" : ""}`} key={mission.id}>
               <span className="log-index">{done ? "✓" : String(index + 1).padStart(2, "0")}</span><span>{mission.title}</span><span>{done ? `+${progress.missionScores[mission.id] ?? 0} PTS` : "NOT CLEARED"}</span>
@@ -337,7 +374,7 @@ function ProgressPage({ progress, missionCount, percentToNext, currentLevel, onS
       </section>
       <div className="dashboard-actions">
         <p>Your save stays in this browser. No account, no syncing, just your game.</p>
-        <button className="text-button danger-text" onClick={onReset}><RotateCcw size={14} /> Reset all progress</button>
+        <button className="text-button danger-text" onClick={onReset}><RotateCcw size={14} /> Reset {game.title} progress</button>
       </div>
     </main>
   );

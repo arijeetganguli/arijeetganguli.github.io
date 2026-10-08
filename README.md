@@ -1,6 +1,6 @@
 # Stavion Labs
 
-Stavion Labs is a local-first playground for learning technical skills through interactive missions. The MVP ships with **Git Quest**, a browser-only simulation covering everyday Git work, recovery, and release incidents.
+Stavion Labs is a local-first playground for learning technical skills through interactive missions. It includes **Git Quest** for version control and **SQL Detective**, a browser-only PostgreSQL-style SQL learning game with Beginner, Intermediate, Advanced, and Expert tiers.
 
 ## Run locally
 
@@ -19,7 +19,7 @@ npm run build
 npm run preview
 ```
 
-Git Quest commands are validated against the current mission; each attempt explains why it was accepted or rejected, and accepted steps update the simulated repository view. Nothing is sent to a shell or run against your actual files. Mission progress is stored in this browser's `localStorage`; no login, backend, or external API is used.
+Git Quest commands and SQL queries are checked against the current mission; each attempt explains why it was accepted or rejected, and accepted steps update the simulated repository or dataset view. Queries are never executed against a real database, and Git commands are never sent to a shell. Each game's mission progress is stored independently in this browser's `localStorage`; no login, backend, or external API is used.
 
 The earlier standalone prototype remains at [`gitquest.html`](./gitquest.html). The new app starts at Vite's `index.html`.
 

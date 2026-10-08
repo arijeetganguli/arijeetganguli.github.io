@@ -52,12 +52,52 @@ describe("Stavion Labs player flow", () => {
       currentMission: 2,
       completedMissions: ["first-commit", "missing-change"],
     });
+
     render(<App />);
 
     const user = userEvent.setup();
     await user.click(await screen.findByRole("button", { name: "View player progress" }));
     expect(await screen.findByText("2/10")).toBeInTheDocument();
     expect(screen.getByText("FINAL SCORE").parentElement).toHaveTextContent("200");
+  });
+
+  it("opens SQL Detective, explains wrong queries, and saves SQL progress separately", async () => {
+    localStorage.setItem("stavion-labs-progress-v1", JSON.stringify({
+      "git-quest": {
+        gameId: "git-quest",
+        currentMission: 1,
+        completedMissions: ["first-commit"],
+        score: 100,
+        xp: 100,
+        hintsUsed: 0,
+        achievements: ["first-commit"],
+        lastPlayedAt: "",
+        streak: 1,
+        lastPlayedDay: "",
+        missionRuns: {},
+        missionScores: { "first-commit": 100 },
+      },
+    }));
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(await screen.findByRole("button", { name: "Play SQL Detective" }));
+    expect(await screen.findByRole("heading", { name: /Read the Customer File/ })).toBeInTheDocument();
+    expect(screen.getByText("BEGINNER / 01")).toBeInTheDocument();
+
+    await user.type(screen.getByRole("textbox", { name: "SQL query" }), "SELECT * FROM customers;");
+    await user.click(screen.getByRole("button", { name: "Execute" }));
+    expect(await screen.findByText(/SELECT \* returns every column/i)).toBeInTheDocument();
+
+    await user.type(screen.getByRole("textbox", { name: "SQL query" }), "SELECT name, email FROM customers;");
+    await user.click(screen.getByRole("button", { name: "Execute" }));
+
+    await waitFor(() => {
+      const save = JSON.parse(localStorage.getItem("stavion-labs-progress-v1") ?? "{}");
+      expect(save["git-quest"].completedMissions).toEqual(["first-commit"]);
+      expect(save["sql-detective"].missionRuns["sql-select-columns"].stepIndex).toBe(1);
+    });
+    expect(await screen.findByText(/avoiding unnecessary customer data/i)).toBeInTheDocument();
   });
 
   it("requires the accepted choice before resolving a conflict", async () => {

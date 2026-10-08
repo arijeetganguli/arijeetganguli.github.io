@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { createFreshProgress } from "../../platform/progress/LocalProgressStore";
 import { gitQuestMissions } from "./missions";
+import { sqlDetectiveMissions } from "../sql-detective/missions";
 import {
   getMissionRun, normalizeCommand, submitMissionCommand, useMissionHint,
 } from "./engine";
@@ -94,5 +95,59 @@ describe("Git Quest mission engine", () => {
     expect(progress.currentMission).toBe(10);
     expect(progress.achievements).toContain("git-master");
     expect(progress.xp).toBeGreaterThan(0);
+  });
+
+  it("accepts normalized SQL with an optional trailing semicolon and explains incorrect queries", () => {
+    const mission = sqlDetectiveMissions[0];
+    const wrong = submitMissionCommand(
+      createFreshProgress("sql-detective"),
+      mission,
+      "SELECT * FROM customers;",
+      0,
+      sqlDetectiveMissions.length,
+    );
+    expect(wrong.accepted).toBe(false);
+    expect(wrong.message).toContain("SELECT * returns every column");
+
+    const correct = submitMissionCommand(
+      wrong.progress,
+      mission,
+      " select   name, email from customers ",
+      0,
+      sqlDetectiveMissions.length,
+    );
+    expect(correct.accepted).toBe(true);
+    expect(correct.message).toContain("avoiding unnecessary customer data");
+  });
+
+  it("orders SQL missions into four sequential four-mission skill tiers", () => {
+    expect(sqlDetectiveMissions).toHaveLength(16);
+    expect(sqlDetectiveMissions.map((mission) => mission.difficulty)).toEqual([
+      ...Array<"Beginner">(4).fill("Beginner"),
+      ...Array<"Intermediate">(4).fill("Intermediate"),
+      ...Array<"Advanced">(4).fill("Advanced"),
+      ...Array<"Expert">(4).fill("Expert"),
+    ]);
+    expect(new Set(sqlDetectiveMissions.map((mission) => mission.id)).size).toBe(16);
+  });
+
+  it("awards a separate mastery achievement at the end of every SQL tier", () => {
+    let progress = createFreshProgress("sql-detective");
+    sqlDetectiveMissions.forEach((mission, missionIndex) => {
+      const result = submitMissionCommand(
+        progress,
+        mission,
+        mission.steps[0].acceptedCommands[0],
+        missionIndex,
+        sqlDetectiveMissions.length,
+      );
+      expect(result.accepted).toBe(true);
+      progress = result.progress;
+    });
+
+    expect(progress.completedMissions).toHaveLength(16);
+    expect(progress.achievements).toEqual(expect.arrayContaining([
+      "sql-beginner", "sql-intermediate", "sql-advanced", "sql-expert", "sql-master",
+    ]));
   });
 });

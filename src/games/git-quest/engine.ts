@@ -9,7 +9,7 @@ export interface CommandResult {
 }
 
 export function normalizeCommand(command: string): string {
-  return command.trim().replace(/\s+/g, " ").toLowerCase();
+  return command.trim().replace(/\s+/g, " ").replace(/;+\s*$/, "").toLowerCase();
 }
 
 export function getMissionRun(progress: GameProgress, mission: Mission): MissionRun {
@@ -61,7 +61,10 @@ export function submitMissionCommand(
       accepted: false,
       message: commandAccepted && !choiceAccepted
         ? step.choiceFeedback?.[selectedChoice ?? ""] ?? "Choose the behavior that matches the agreed requirement before staging the resolution."
-        : `No simulated change was made. This step is about: ${step.objective} Review the repository state, then try again.`,
+        : step.incorrectFeedback?.find((answer) => normalizeCommand(answer.command) === normalizeCommand(command))?.message
+          ?? (mission.id.startsWith("sql-")
+            ? `That query does not meet the requirement: ${step.objective} Compare your clauses with the expected query: ${step.acceptedCommands[0]}`
+            : `No simulated change was made. This step is about: ${step.objective} Review the repository state, then try again.`),
       completedMission: false,
       missionScore: 0,
       progress: nextProgress,
@@ -147,10 +150,15 @@ export function awardAchievements(
     conflict: "conflict-resolver",
     "time-travel": "history-detective",
     "production-emergency": "git-survivor",
+    "sql-count-orders": "sql-beginner",
+    "sql-subquery-average": "sql-intermediate",
+    "sql-deduplicate-events": "sql-advanced",
+    "sql-keyset-pagination": "sql-expert",
   };
   const unlocked = [...current];
   const award = awards[missionId];
   if (award && !unlocked.includes(award)) unlocked.push(award);
   if (completedCount === 10 && !unlocked.includes("git-master")) unlocked.push("git-master");
+  if (completedCount === 16 && !unlocked.includes("sql-master")) unlocked.push("sql-master");
   return unlocked;
 }

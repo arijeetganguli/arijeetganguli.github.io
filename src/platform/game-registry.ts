@@ -1,19 +1,8 @@
 import { gitQuest } from "../games/git-quest/game";
+import { sqlDetective } from "../games/sql-detective/game";
 import type { GameDefinition } from "./types";
 
 const comingSoonGames: GameDefinition[] = [
-  {
-    id: "sql-detective",
-    title: "SQL Detective",
-    shortTitle: "SQL Detective",
-    description: "Trace a suspicious metric through a broken analytics query.",
-    category: "SQL",
-    difficulty: "Beginner",
-    estimatedMinutes: 15,
-    status: "coming-soon",
-    icon: "⌘",
-    missions: [],
-  },
   {
     id: "iceberg-rescue",
     title: "Iceberg Rescue",
@@ -52,7 +41,7 @@ const comingSoonGames: GameDefinition[] = [
   },
 ];
 
-export const gameRegistry: GameDefinition[] = [gitQuest, ...comingSoonGames];
+export const gameRegistry: GameDefinition[] = [gitQuest, sqlDetective, ...comingSoonGames];
 
 export function getGame(gameId: string): GameDefinition | undefined {
   return gameRegistry.find((game) => game.id === gameId);

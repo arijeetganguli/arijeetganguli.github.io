@@ -1,4 +1,4 @@
-export type Difficulty = "Beginner" | "Intermediate" | "Advanced";
+export type Difficulty = "Beginner" | "Intermediate" | "Advanced" | "Expert";
 export type GameStatus = "available" | "coming-soon";
 
 export interface MissionStep {
@@ -10,6 +10,7 @@ export interface MissionStep {
   choices?: { id: string; label: string }[];
   correctChoiceId?: string;
   choiceFeedback?: Record<string, string>;
+  incorrectFeedback?: { command: string; message: string }[];
 }
 
 export interface Mission {

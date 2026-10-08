@@ -229,6 +229,7 @@ button { -webkit-tap-highlight-color: transparent; }
 .mission-nav-label { display: flex; justify-content: space-between; padding: 0 8px 8px; color: #58685d; font: .51rem var(--mono); letter-spacing: .1em; }
 .mission-nav-label span { color: #53645a; }
 .mission-nav { display: grid; gap: 3px; }
+.mission-tier-label { grid-column: 1 / -1; margin: 10px 8px 2px; color: #769b80; font: 600 .48rem var(--mono); letter-spacing: .09em; text-transform: uppercase; }
 .mission-nav-item { position: relative; min-height: 36px; display: flex; align-items: center; gap: 9px; border: 1px solid transparent; border-radius: 5px; padding: 7px 8px; color: #839087; background: transparent; text-align: left; font-size: .67rem; cursor: pointer; transition: .14s; }
 .mission-nav-item:hover:not(:disabled) { color: #d4e4d7; background: #101811; }
 .mission-nav-item.selected { border-color: rgba(116, 226, 136, .14); color: #d6e9d9; background: rgba(96, 215, 122, .075); }
@@ -264,6 +265,7 @@ button { -webkit-tap-highlight-color: transparent; }
 .panel-heading { height: 38px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #19271e; padding: 0 12px; }
 .panel-heading > div { display: flex; align-items: center; gap: 7px; color: #92ac96; font: 600 .53rem var(--mono); letter-spacing: .08em; }
 .panel-heading > div svg { color: #7eba89; }
+.database-icon { color: #7eba89; font: 650 .5rem var(--mono); letter-spacing: .02em; }
 .repo-branch { color: #92c99b; font: .58rem var(--mono); }
 .repo-branch span { color: #708276; }
 .repo-body { padding: 8px 12px 10px; }
