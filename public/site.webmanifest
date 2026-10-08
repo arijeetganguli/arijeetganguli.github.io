@@ -1,0 +1,17 @@
+{
+  "name": "Stavion Labs",
+  "short_name": "Stavion",
+  "description": "Learn technology by playing interactive engineering missions.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#050807",
+  "theme_color": "#050807",
+  "icons": [
+    {
+      "src": "./app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -100,6 +100,57 @@ describe("Stavion Labs player flow", () => {
     expect(await screen.findByText(/avoiding unnecessary customer data/i)).toBeInTheDocument();
   });
 
+  it("switches games from My progress and displays each game's separate save", async () => {
+    localStorage.setItem("stavion-labs-progress-v1", JSON.stringify({
+      "git-quest": {
+        gameId: "git-quest",
+        currentMission: 1,
+        completedMissions: ["first-commit"],
+        score: 85,
+        xp: 85,
+        hintsUsed: 0,
+        achievements: ["first-commit"],
+        lastPlayedAt: "",
+        streak: 1,
+        lastPlayedDay: "",
+        missionRuns: {},
+        missionScores: { "first-commit": 85 },
+      },
+      "sql-detective": {
+        gameId: "sql-detective",
+        currentMission: 2,
+        completedMissions: ["sql-select-columns"],
+        score: 85,
+        xp: 85,
+        hintsUsed: 0,
+        achievements: [],
+        lastPlayedAt: "",
+        streak: 1,
+        lastPlayedDay: "",
+        missionRuns: {},
+        missionScores: { "sql-select-columns": 85 },
+      },
+    }));
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(await screen.findByRole("button", { name: "View player progress" }));
+
+    expect(await screen.findByText("Git Quest", { selector: ".progress-game-option-copy strong" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "View Git Quest progress" })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByText("1/10")).toBeInTheDocument();
+    expect(screen.getByText("01")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "View SQL Detective progress" }));
+    expect(screen.getByRole("button", { name: "View SQL Detective progress" })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByText("1/16")).toBeInTheDocument();
+    expect(screen.getByText("SQL DETECTIVE")).toBeInTheDocument();
+    expect(screen.getByText("Read the Customer File")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "View Git Quest progress" }));
+    expect(screen.getByText("1/10")).toBeInTheDocument();
+    expect(screen.getByText("First Commit", { selector: ".mission-log-row span:nth-child(2)" })).toBeInTheDocument();
+  });
+
   it("requires the accepted choice before resolving a conflict", async () => {
     const user = userEvent.setup();
     render(<App />);

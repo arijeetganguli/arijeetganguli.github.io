@@ -162,6 +162,17 @@ button { -webkit-tap-highlight-color: transparent; }
 .dashboard-heading { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 30px; }
 .dashboard-heading h1 { margin: 13px 0 7px; color: #e4eee6; font-size: clamp(2.3rem, 5vw, 3.4rem); font-weight: 640; letter-spacing: -.07em; }
 .dashboard-heading p { margin: 0; color: #819087; font-size: .82rem; }
+.progress-game-switcher { margin: 0 0 26px; }
+.progress-game-switcher > .eyebrow { margin-bottom: 10px; }
+.progress-game-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.progress-game-option { min-width: 0; display: flex; align-items: center; gap: 11px; border: 1px solid #1c2b21; border-radius: 8px; padding: 12px; color: #aab9ad; background: #0a0f0c; text-align: left; cursor: pointer; transition: border-color .15s, background .15s; }
+.progress-game-option:hover { border-color: #355640; background: #0d1510; }
+.progress-game-option.selected { border-color: rgba(132, 224, 151, .46); color: #e2eee4; background: rgba(74, 128, 82, .12); }
+.progress-game-option-icon { width: 32px; height: 32px; flex: 0 0 auto; display: grid; place-items: center; border: 1px solid #294031; border-radius: 6px; color: var(--green); background: rgba(105, 214, 122, .07); font: 650 .8rem var(--mono); }
+.progress-game-option-copy { min-width: 0; display: grid; gap: 4px; }
+.progress-game-option-copy strong { color: #d4e2d7; font-size: .76rem; }
+.progress-game-option-copy > span { overflow: hidden; color: #77877c; font: .53rem var(--mono); text-overflow: ellipsis; white-space: nowrap; }
+.progress-game-option-active { margin-left: auto; color: #90d89c; font: .47rem var(--mono); letter-spacing: .06em; }
 .level-card { border: 1px solid #26432e; border-radius: 10px; padding: 23px 25px; background: radial-gradient(ellipse at 90% 2%, rgba(90, 234, 123, .1), transparent 26rem), #0b110d; box-shadow: 0 10px 46px #0003; }
 .level-card-head { display: flex; align-items: center; gap: 13px; }
 .level-emblem { width: 42px; height: 42px; display: grid; place-items: center; border: 1px solid rgba(163, 255, 191, .2); border-radius: 8px; color: var(--green); background: rgba(105, 239, 139, .08); }
@@ -407,6 +418,7 @@ button { -webkit-tap-highlight-color: transparent; }
   .footer-inner > span:last-child { font-size: .5rem; }
   .dashboard-page { padding-block: 39px 60px; }
   .dashboard-heading { align-items: start; flex-direction: column; }
+  .progress-game-options { grid-template-columns: 1fr; }
   .stat-grid { grid-template-columns: repeat(2, 1fr); }
   .achievement-grid { grid-template-columns: 1fr; }
   .game-page { padding-top: 16px; }

@@ -122,6 +122,13 @@ function App() {
     setView("game");
   }
 
+  function selectProgressGame(gameId: string) {
+    const nextGame = getGame(gameId);
+    if (!nextGame || nextGame.status !== "available") return;
+    setActiveGameId(gameId);
+    setProgress(progressByGame[gameId] ?? createFreshProgress(gameId));
+  }
+
   function navigate(nextView: View) {
     setView(nextView);
     if (nextView !== "game") setSelectedMissionId("");
@@ -189,11 +196,14 @@ function App() {
       {view === "progress" && (
         <ProgressPage
           game={game}
+          games={gameRegistry.filter((item) => item.status === "available")}
           progress={progress}
+          progressByGame={progressByGame}
           missionCount={game.missions.length}
           percentToNext={percentToNext}
           currentLevel={currentLevel}
           onStart={() => startQuest(activeGameId)}
+          onGameSelect={selectProgressGame}
           onReset={() => setShowResetConfirm(true)}
         />
       )}
@@ -319,15 +329,20 @@ function HomePage({ games, progressByGame, progress, onStart }: HomePageProps) {
 
 interface ProgressPageProps {
   game: NonNullable<ReturnType<typeof getGame>>;
+  games: typeof gameRegistry;
   progress: GameProgress;
+  progressByGame: Record<string, GameProgress>;
   missionCount: number;
   percentToNext: number;
   currentLevel: ReturnType<typeof levelFor>;
   onStart: () => void;
+  onGameSelect: (gameId: string) => void;
   onReset: () => void;
 }
 
-function ProgressPage({ game, progress, missionCount, percentToNext, currentLevel, onStart, onReset }: ProgressPageProps) {
+function ProgressPage({
+  game, games, progress, progressByGame, missionCount, percentToNext, currentLevel, onStart, onGameSelect, onReset,
+}: ProgressPageProps) {
   const completion = Math.round((progress.completedMissions.length / missionCount) * 100);
   const achievements = ACHIEVEMENTS.filter((item) => item.id.startsWith("sql-") === (game.id === "sql-detective"));
   return (
@@ -336,6 +351,32 @@ function ProgressPage({ game, progress, missionCount, percentToNext, currentLeve
         <div><div className="eyebrow">PLAYER SAVE / LOCAL</div><h1>Your progress.</h1><p>Every mission cleared is a skill you can take to the real world.</p></div>
         <button className="button button-quiet" onClick={onStart}>Resume {game.title} <ArrowRight size={15} /></button>
       </div>
+      <section className="progress-game-switcher" aria-label="Choose game progress">
+        <div className="eyebrow">YOUR GAMES</div>
+        <div className="progress-game-options">
+          {games.map((item) => {
+            const itemProgress = progressByGame[item.id] ?? createFreshProgress(item.id);
+            const selected = item.id === game.id;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                className={`progress-game-option ${selected ? "selected" : ""}`}
+                onClick={() => onGameSelect(item.id)}
+                aria-pressed={selected}
+                aria-label={`View ${item.title} progress`}
+              >
+                <span className="progress-game-option-icon">{item.icon}</span>
+                <span className="progress-game-option-copy">
+                  <strong>{item.title}</strong>
+                  <span>{itemProgress.completedMissions.length}/{item.missions.length} missions · {itemProgress.xp.toLocaleString()} XP</span>
+                </span>
+                {selected && <span className="progress-game-option-active">VIEWING</span>}
+              </button>
+            );
+          })}
+        </div>
+      </section>
       <section className="level-card">
         <div className="level-card-head">
           <div className="level-emblem"><Zap size={22} /></div>
