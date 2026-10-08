@@ -61,6 +61,35 @@ describe("Stavion Labs player flow", () => {
     expect(screen.getByText("FINAL SCORE").parentElement).toHaveTextContent("200");
   });
 
+  it("rotates the landing banner to SQL Detective and launches that game", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    expect(await screen.findByRole("region", { name: "Git Quest highlights" })).toHaveTextContent(/10\s*missions to master Git/);
+    expect(screen.getByRole("region", { name: "Git Quest highlights" })).toHaveTextContent(/3\s*levels of Git challenges/);
+
+    const sqlSlide = await screen.findByRole("button", { name: "Show SQL Detective banner" });
+    await user.click(sqlSlide);
+
+    expect(sqlSlide).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("region", { name: "SQL Detective highlights" })).toHaveTextContent(/16\s*SQL missions to solve/);
+    expect(screen.getByRole("region", { name: "SQL Detective highlights" })).toHaveTextContent(/4\s*SQL skill tiers to master/);
+    expect(screen.getByRole("region", { name: "SQL Detective highlights" })).toHaveTextContent("risk to real databases");
+    expect(screen.getByRole("table", { name: "Sample revenue by category" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Play featured SQL Detective mission" })).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Play featured SQL Detective mission" }));
+    expect(await screen.findByRole("heading", { name: /Read the Customer File/ })).toBeInTheDocument();
+  });
+
+  it("shows Git Quest highlights by default", async () => {
+    render(<App />);
+    const highlights = await screen.findByRole("region", { name: "Git Quest highlights" });
+    expect(highlights).toHaveTextContent(/10\s*missions to master Git/);
+    expect(highlights).toHaveTextContent(/3\s*levels of Git challenges/);
+    expect(highlights).toHaveTextContent("risk to real repositories");
+  });
+
   it("opens SQL Detective, explains wrong queries, and saves SQL progress separately", async () => {
     localStorage.setItem("stavion-labs-progress-v1", JSON.stringify({
       "git-quest": {

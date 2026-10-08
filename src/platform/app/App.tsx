@@ -237,6 +237,18 @@ interface HomePageProps {
 }
 
 function HomePage({ games, progressByGame, progress, onStart }: HomePageProps) {
+  const [activeHeroSlide, setActiveHeroSlide] = useState(0);
+  const [pauseHeroRotation, setPauseHeroRotation] = useState(false);
+
+  useEffect(() => {
+    const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+    if (pauseHeroRotation || prefersReducedMotion) return;
+    const interval = window.setInterval(() => {
+      setActiveHeroSlide((current) => (current + 1) % 2);
+    }, 6500);
+    return () => window.clearInterval(interval);
+  }, [activeHeroSlide, pauseHeroRotation]);
+
   return (
     <main>
       <section className="hero-section page-wrap">
@@ -255,29 +267,66 @@ function HomePage({ games, progressByGame, progress, onStart }: HomePageProps) {
             <span>Built for curious engineers</span>
           </div>
         </div>
-        <div className="hero-art" aria-label="Git commit graph illustration">
-          <div className="art-topline"><span><span className="online-dot" /> LIVE REPOSITORY</span><span>git-quest / main</span></div>
-          <div className="art-code">
-            <div className="commit-row"><span className="commit-line green-line" /><span className="commit-dot current" /><span className="commit-hash">a7f2c1e</span><span className="commit-message">merge: payment flow</span><span className="branch-chip">main</span></div>
-            <div className="commit-row"><span className="commit-line green-line" /><span className="commit-dot" /><span className="commit-hash">91bd120</span><span className="commit-message">fix: timeout edge case</span></div>
-            <div className="commit-row"><span className="commit-line split-line" /><span className="commit-dot" /><span className="commit-hash">5cc8fa1</span><span className="commit-message">feat: checkout validation</span></div>
-            <div className="commit-row"><span className="commit-line split-line" /><span className="commit-dot branch-dot" /><span className="commit-hash">d3100b2</span><span className="commit-message">feat: payment form</span><span className="branch-chip muted-chip">feature</span></div>
-            <div className="commit-row"><span className="commit-line" /><span className="commit-dot" /><span className="commit-hash">30fe820</span><span className="commit-message">chore: release 2.4.0</span></div>
+        <section
+          className="hero-art"
+          aria-label="Featured learning missions"
+          aria-roledescription="carousel"
+          onMouseEnter={() => setPauseHeroRotation(true)}
+          onMouseLeave={() => setPauseHeroRotation(false)}
+        >
+          <div className="art-topline">
+            <span><span className="online-dot" /> {activeHeroSlide === 0 ? "LIVE REPOSITORY" : "LIVE QUERY LAB"}</span>
+            <span>{activeHeroSlide === 0 ? "git-quest / main" : "sql-detective / postgres"}</span>
           </div>
+          {activeHeroSlide === 0 ? (
+            <div className="art-code" aria-label="Git commit graph illustration">
+              <div className="commit-row"><span className="commit-line green-line" /><span className="commit-dot current" /><span className="commit-hash">a7f2c1e</span><span className="commit-message">merge: payment flow</span><span className="branch-chip">main</span></div>
+              <div className="commit-row"><span className="commit-line green-line" /><span className="commit-dot" /><span className="commit-hash">91bd120</span><span className="commit-message">fix: timeout edge case</span></div>
+              <div className="commit-row"><span className="commit-line split-line" /><span className="commit-dot" /><span className="commit-hash">5cc8fa1</span><span className="commit-message">feat: checkout validation</span></div>
+              <div className="commit-row"><span className="commit-line split-line" /><span className="commit-dot branch-dot" /><span className="commit-hash">d3100b2</span><span className="commit-message">feat: payment form</span><span className="branch-chip muted-chip">feature</span></div>
+              <div className="commit-row"><span className="commit-line" /><span className="commit-dot" /><span className="commit-hash">30fe820</span><span className="commit-message">chore: release 2.4.0</span></div>
+            </div>
+          ) : (
+            <div className="sql-hero-preview" aria-label="SQL query and results illustration">
+              <div className="sql-hero-query">
+                <div><span>01</span><code><b>SELECT</b> category, <b>SUM</b>(revenue)</code></div>
+                <div><span>02</span><code><b>FROM</b> orders</code></div>
+                <div><span>03</span><code><b>WHERE</b> status = <i>'paid'</i></code></div>
+                <div><span>04</span><code><b>GROUP BY</b> category</code></div>
+              </div>
+              <div className="sql-hero-results" role="table" aria-label="Sample revenue by category">
+                <div className="sql-hero-result sql-hero-result-head" role="row"><span role="columnheader">CATEGORY</span><span role="columnheader">REVENUE</span></div>
+                <div className="sql-hero-result" role="row"><span role="cell">hardware</span><strong role="cell">$12,480</strong></div>
+                <div className="sql-hero-result" role="row"><span role="cell">software</span><strong role="cell">$8,920</strong></div>
+                <div className="sql-hero-result" role="row"><span role="cell">services</span><strong role="cell">$6,350</strong></div>
+              </div>
+            </div>
+          )}
           <div className="art-footer">
-            <div><span className="tiny-label">QUEST STATUS</span><strong><span className="online-dot" /> Changes approved</strong></div>
-            <div className="art-xp"><Zap size={15} /> +120 XP</div>
+            <div><span className="tiny-label">QUEST STATUS</span><strong><span className="online-dot" /> {activeHeroSlide === 0 ? "Changes approved" : "Revenue query verified"}</strong></div>
+            <div className="art-xp"><Zap size={15} /> {activeHeroSlide === 0 ? "+120 XP" : "+190 XP"}</div>
           </div>
-          <div className="art-corner">GIT QUEST / MISSION 04</div>
-        </div>
+          <div className="hero-banner-controls" role="group" aria-label="Choose featured game">
+            <button type="button" aria-label="Show Git Quest banner" className={activeHeroSlide === 0 ? "active" : ""} aria-pressed={activeHeroSlide === 0} onClick={() => setActiveHeroSlide(0)}>
+              <span /> Git Quest
+            </button>
+            <button type="button" aria-label="Show SQL Detective banner" className={activeHeroSlide === 1 ? "active" : ""} aria-pressed={activeHeroSlide === 1} onClick={() => setActiveHeroSlide(1)}>
+              <span /> SQL Detective
+            </button>
+            <button className="hero-banner-play" aria-label={`Play featured ${activeHeroSlide === 0 ? "Git Quest" : "SQL Detective"} mission`} onClick={() => onStart(activeHeroSlide === 0 ? "git-quest" : "sql-detective")}>
+              Play {activeHeroSlide === 0 ? "Git Quest" : "SQL Detective"} <ArrowRight size={13} />
+            </button>
+          </div>
+          <div className="art-corner">{activeHeroSlide === 0 ? "GIT QUEST / MISSION 04" : "SQL DETECTIVE / ADVANCED 01"}</div>
+        </section>
       </section>
 
-      <section className="signal-strip">
-        <div><span className="signal-number">10</span><span>missions to master Git</span></div>
+      <section className="signal-strip" aria-label={`${activeHeroSlide === 0 ? "Git Quest" : "SQL Detective"} highlights`}>
+        <div><span className="signal-number">{activeHeroSlide === 0 ? "10" : "16"}</span><span>{activeHeroSlide === 0 ? "missions to master Git" : "SQL missions to solve"}</span></div>
         <span className="signal-separator" />
-        <div><span className="signal-number">0</span><span>risk to real repositories</span></div>
+        <div><span className="signal-number">{activeHeroSlide === 0 ? "3" : "4"}</span><span>{activeHeroSlide === 0 ? "levels of Git challenges" : "SQL skill tiers to master"}</span></div>
         <span className="signal-separator" />
-        <div><span className="signal-number">100%</span><span>local-first, no account needed</span></div>
+        <div><span className="signal-number">0</span><span>{activeHeroSlide === 0 ? "risk to real repositories" : "risk to real databases"}</span></div>
       </section>
 
       <section className="catalogue-section page-wrap" id="games">
