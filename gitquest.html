@@ -1,0 +1,1367 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark">
+  <title>GitQuest — Learn Git by doing</title>
+  <style>
+    :root {
+      --bg: #080b10;
+      --surface: #10151d;
+      --surface-2: #151c26;
+      --surface-3: #1a2330;
+      --line: #263243;
+      --line-bright: #3a4a5f;
+      --text: #f1f5f9;
+      --muted: #91a0b4;
+      --green: #53e0a1;
+      --green-dim: #173d32;
+      --blue: #79a8ff;
+      --purple: #ad8cff;
+      --amber: #f5c76b;
+      --red: #ff7d87;
+      --radius: 16px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 80% -10%, rgba(83, 224, 161, .09), transparent 28rem),
+        radial-gradient(circle at -10% 30%, rgba(121, 168, 255, .06), transparent 30rem),
+        var(--bg);
+      font-family: var(--sans);
+      line-height: 1.5;
+    }
+
+    button, input, select, textarea { font: inherit; }
+    button { color: inherit; }
+    button, [role="button"] { -webkit-tap-highlight-color: transparent; }
+    button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+      outline: 3px solid rgba(121, 168, 255, .45);
+      outline-offset: 2px;
+    }
+    h1, h2, h3, p { margin-top: 0; }
+    h1, h2, h3 { letter-spacing: -.025em; }
+    h1 { font-size: clamp(2.25rem, 5vw, 4.65rem); line-height: 1.02; margin-bottom: 1.2rem; }
+    h2 { font-size: clamp(1.65rem, 3vw, 2.35rem); line-height: 1.15; margin-bottom: .65rem; }
+    h3 { font-size: 1.05rem; margin-bottom: .55rem; }
+    p { color: var(--muted); }
+    a { color: var(--blue); }
+    code, pre { font-family: var(--mono); }
+    code { color: #b8cef8; }
+
+    .shell { max-width: 1240px; margin: 0 auto; padding: 0 28px; }
+    .topbar {
+      position: sticky; top: 0; z-index: 20;
+      border-bottom: 1px solid rgba(58, 74, 95, .65);
+      background: rgba(8, 11, 16, .86);
+      backdrop-filter: blur(18px);
+    }
+    .topbar-inner { height: 72px; display: flex; align-items: center; gap: 28px; }
+    .brand {
+      display: inline-flex; align-items: center; gap: 10px; border: 0; padding: 0;
+      background: none; font-size: 1.16rem; font-weight: 760; cursor: pointer;
+    }
+    .brand-mark {
+      width: 34px; height: 34px; display: grid; place-items: center;
+      border-radius: 10px; color: #07120e; background: var(--green); box-shadow: 0 0 24px rgba(83,224,161,.2);
+    }
+    .brand-mark svg { width: 20px; height: 20px; }
+    .nav { display: flex; gap: 4px; margin-left: 18px; }
+    .nav button {
+      border: 0; border-radius: 9px; padding: 9px 13px; cursor: pointer;
+      color: var(--muted); background: transparent; font-size: .9rem; font-weight: 650;
+    }
+    .nav button:hover { color: var(--text); background: var(--surface-2); }
+    .nav button.active { color: var(--text); background: var(--surface-3); box-shadow: inset 0 0 0 1px var(--line); }
+    .stats { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+    .level-pill {
+      display: flex; align-items: center; gap: 9px; padding: 8px 12px;
+      border: 1px solid var(--line); border-radius: 99px; background: var(--surface);
+      font-size: .79rem; font-weight: 700;
+    }
+    .level-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 10px var(--green); }
+    .avatar {
+      width: 35px; height: 35px; display: grid; place-items: center; border-radius: 50%;
+      border: 1px solid #47635a; background: var(--green-dim); color: var(--green); font-weight: 800;
+    }
+    .menu-btn { display: none; border: 1px solid var(--line); border-radius: 9px; background: var(--surface); padding: 7px 10px; }
+
+    main { min-height: calc(100vh - 72px); }
+    .page { padding-top: 56px; padding-bottom: 80px; animation: appear .28s ease-out; }
+    @keyframes appear { from { opacity: 0; transform: translateY(5px); } }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px; margin-bottom: 15px;
+      color: var(--green); font-family: var(--mono); text-transform: uppercase;
+      font-size: .72rem; font-weight: 800; letter-spacing: .13em;
+    }
+    .eyebrow::before { content: ""; width: 22px; height: 1px; background: var(--green); }
+    .lead { max-width: 670px; font-size: 1.08rem; line-height: 1.75; }
+    .gradient-text {
+      background: linear-gradient(110deg, #fff 15%, var(--green) 90%);
+      background-clip: text; color: transparent;
+    }
+
+    .hero { display: grid; grid-template-columns: 1.15fr .85fr; align-items: center; gap: 64px; min-height: 565px; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 11px; margin-top: 29px; }
+    .btn {
+      border: 1px solid transparent; border-radius: 10px; padding: 11px 17px;
+      cursor: pointer; font-weight: 750; font-size: .9rem; transition: transform .15s, background .15s, border-color .15s;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary { color: #07120e; background: var(--green); box-shadow: 0 7px 24px rgba(83, 224, 161, .14); }
+    .btn-primary:hover { background: #72e8b4; }
+    .btn-secondary { border-color: var(--line); background: var(--surface-2); }
+    .btn-secondary:hover { border-color: var(--line-bright); background: var(--surface-3); }
+    .btn-danger { color: var(--red); border-color: rgba(255,125,135,.28); background: rgba(255,125,135,.07); }
+    .btn-sm { padding: 8px 12px; font-size: .8rem; }
+    .btn:disabled { opacity: .42; cursor: not-allowed; transform: none; }
+
+    .terminal {
+      position: relative; overflow: hidden; border: 1px solid var(--line); border-radius: 18px;
+      background: rgba(13,18,25,.92); box-shadow: 0 28px 80px rgba(0,0,0,.35);
+    }
+    .terminal-head { display: flex; align-items: center; gap: 6px; height: 42px; padding: 0 14px; border-bottom: 1px solid var(--line); background: #121822; }
+    .terminal-dot { width: 8px; height: 8px; border-radius: 50%; background: #344154; }
+    .terminal-title { margin-left: 8px; color: #6f7e92; font: .7rem var(--mono); }
+    .terminal-body { padding: 26px; min-height: 326px; font: .83rem/1.9 var(--mono); color: #a9b7c9; }
+    .term-green { color: var(--green); }
+    .term-blue { color: var(--blue); }
+    .branch-line { display: block; white-space: pre; overflow: hidden; }
+    .terminal-status {
+      margin-top: 20px; padding-top: 17px; border-top: 1px dashed var(--line);
+      display: flex; justify-content: space-between; color: #708096; font-size: .72rem;
+    }
+
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+    .card {
+      border: 1px solid var(--line); border-radius: var(--radius); background: rgba(16,21,29,.84);
+      padding: 22px; box-shadow: 0 15px 45px rgba(0,0,0,.09);
+    }
+    .card-hover { transition: transform .2s, border-color .2s; }
+    .card-hover:hover { transform: translateY(-3px); border-color: var(--line-bright); }
+    .card p:last-child { margin-bottom: 0; }
+    .kpi { font-size: 1.75rem; font-weight: 800; letter-spacing: -.04em; margin: 4px 0; }
+    .kpi-label { color: var(--muted); font-size: .76rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+    .icon-box {
+      width: 39px; height: 39px; display: grid; place-items: center; margin-bottom: 17px;
+      border-radius: 10px; color: var(--green); background: var(--green-dim); font-family: var(--mono); font-weight: 800;
+    }
+    .section-head { display: flex; justify-content: space-between; align-items: end; gap: 20px; margin: 52px 0 22px; }
+    .section-head p { margin: 0; }
+    .section-head:first-child { margin-top: 0; }
+
+    .progress { height: 7px; overflow: hidden; border-radius: 99px; background: #202a38; }
+    .progress > span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--green), #86f0c3); transition: width .4s ease; }
+    .progress.blue > span { background: linear-gradient(90deg, var(--blue), var(--purple)); }
+    .meta-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--muted); font-size: .76rem; }
+    .tag {
+      display: inline-flex; align-items: center; gap: 5px; padding: 4px 8px; border: 1px solid var(--line);
+      border-radius: 99px; color: #a8b5c6; background: #121925; font: .69rem var(--mono);
+    }
+    .tag.good { border-color: rgba(83,224,161,.25); color: var(--green); background: rgba(83,224,161,.07); }
+    .tag.warn { border-color: rgba(245,199,107,.25); color: var(--amber); background: rgba(245,199,107,.07); }
+
+    .welcome-strip {
+      display: flex; align-items: center; gap: 18px; padding: 18px 20px; margin-top: 24px;
+      border: 1px solid rgba(83,224,161,.22); border-radius: 13px; background: rgba(83,224,161,.055);
+    }
+    .welcome-strip p { margin: 2px 0 0; font-size: .85rem; }
+    .welcome-strip .icon-box { margin: 0; flex: 0 0 auto; }
+
+    .module-list { display: grid; gap: 12px; }
+    .module-card {
+      display: grid; grid-template-columns: 50px 1fr auto; align-items: center; gap: 17px;
+      width: 100%; padding: 17px 18px; text-align: left; border: 1px solid var(--line);
+      border-radius: 13px; color: inherit; background: var(--surface); cursor: pointer;
+    }
+    .module-card:hover { border-color: var(--line-bright); background: var(--surface-2); }
+    .module-number {
+      width: 44px; height: 44px; display: grid; place-items: center; border-radius: 12px;
+      background: #192230; color: var(--blue); font: 750 .82rem var(--mono);
+    }
+    .module-card.done .module-number { color: var(--green); background: var(--green-dim); }
+    .module-card h3 { margin: 0 0 4px; }
+    .module-card p { margin: 0; font-size: .8rem; }
+    .module-arrow { color: #68778a; font-size: 1.25rem; }
+
+    .lesson-layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 28px; }
+    .lesson-side { position: sticky; top: 96px; align-self: start; }
+    .back-btn { border: 0; color: var(--muted); background: none; padding: 0; cursor: pointer; font-weight: 700; font-size: .83rem; }
+    .back-btn:hover { color: var(--text); }
+    .lesson-steps { display: grid; gap: 8px; margin-top: 23px; }
+    .lesson-step { display: flex; align-items: center; gap: 9px; color: #738196; font-size: .76rem; font-weight: 700; }
+    .step-dot { width: 20px; height: 20px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 50%; font: .63rem var(--mono); }
+    .lesson-step.active { color: var(--text); }
+    .lesson-step.active .step-dot { border-color: var(--green); color: var(--green); background: var(--green-dim); }
+    .lesson-main { min-width: 0; }
+    .lesson-main > .card { margin-top: 18px; }
+    .lesson-title-row { display: flex; align-items: start; justify-content: space-between; gap: 20px; }
+    .git-visual {
+      min-height: 215px; display: grid; align-content: center; overflow: auto;
+      border: 1px solid var(--line); border-radius: 13px; padding: 22px;
+      background: #0b1017; color: #b6c3d3; font: .82rem/1.8 var(--mono);
+    }
+    .git-visual pre { margin: 0; white-space: pre; color: #b6c3d3; }
+    .visual-label { margin-bottom: 12px; color: #5f7086; font: .68rem var(--mono); text-transform: uppercase; letter-spacing: .1em; }
+    .flow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+    .flow-node { padding: 9px 11px; border: 1px solid #35445a; border-radius: 8px; color: #c4d0df; background: #131b26; }
+    .flow-node.accent { border-color: rgba(83,224,161,.45); color: var(--green); background: var(--green-dim); }
+    .flow-arrow { color: #526176; }
+    .practice { border-color: #344358; background: linear-gradient(140deg, #121923, #10161f); }
+    .options { display: grid; gap: 9px; margin-top: 18px; }
+    .option {
+      display: flex; align-items: center; gap: 12px; width: 100%; padding: 13px 14px;
+      border: 1px solid var(--line); border-radius: 10px; color: #c7d0dd; background: #121925;
+      text-align: left; cursor: pointer;
+    }
+    .option:hover:not(:disabled) { border-color: #50627a; background: #17202c; }
+    .option:disabled { cursor: default; }
+    .option.correct { border-color: rgba(83,224,161,.55); background: rgba(83,224,161,.09); color: var(--text); }
+    .option.wrong { border-color: rgba(255,125,135,.52); background: rgba(255,125,135,.075); }
+    .choice-key { width: 25px; height: 25px; display: grid; place-items: center; flex: 0 0 auto; border: 1px solid #3a4759; border-radius: 6px; font: .7rem var(--mono); }
+    .feedback { margin-top: 14px; padding: 14px; border-left: 3px solid var(--green); background: rgba(83,224,161,.055); }
+    .feedback.bad { border-color: var(--red); background: rgba(255,125,135,.05); }
+    .feedback p { margin: 5px 0 0; font-size: .87rem; }
+    .feedback .answer-reason { margin-top: 12px; padding-top: 11px; border-top: 1px solid var(--line); }
+    .code-block { overflow: auto; margin: 14px 0; padding: 15px 17px; border: 1px solid #283548; border-radius: 9px; background: #090e14; color: #bcd0ed; font: .8rem/1.7 var(--mono); white-space: pre; }
+    .principle-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 11px; }
+    .principle { padding: 13px; border-radius: 9px; background: #151d28; }
+    .principle strong { display: block; margin-bottom: 3px; font-size: .8rem; }
+    .principle span { color: var(--muted); font-size: .77rem; }
+    .simulator textarea { width: 100%; min-height: 170px; resize: vertical; margin: 11px 0; padding: 14px; border: 1px solid var(--line); border-radius: 9px; color: #c9d6e7; background: #090e14; font: .8rem/1.7 var(--mono); }
+
+    .test-shell { max-width: 780px; margin: 0 auto; }
+    .test-top { display: flex; justify-content: space-between; gap: 18px; margin-bottom: 12px; }
+    .question-card { padding: clamp(22px, 4vw, 36px); margin-top: 24px; }
+    .question-topic { color: var(--green); font: 700 .69rem var(--mono); text-transform: uppercase; letter-spacing: .1em; }
+    .question-card h2 { margin: 13px 0 20px; font-size: clamp(1.25rem, 3vw, 1.75rem); line-height: 1.4; }
+    .test-feedback { margin-top: 22px; padding-top: 20px; border-top: 1px solid var(--line); }
+    .test-actions { display: flex; justify-content: flex-end; margin-top: 18px; }
+    .score-ring {
+      width: 146px; height: 146px; display: grid; place-items: center; margin: 8px auto 25px;
+      border-radius: 50%; background: conic-gradient(var(--green) calc(var(--score) * 1%), #202b39 0);
+      position: relative;
+    }
+    .score-ring::after { content: ""; position: absolute; inset: 10px; border-radius: 50%; background: var(--surface); }
+    .score-ring strong { z-index: 1; font-size: 2rem; }
+    .result-center { text-align: center; }
+    .area-list { display: grid; gap: 9px; }
+    .area-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: .86rem; }
+
+    .profile-grid { display: grid; grid-template-columns: .8fr 1.2fr; gap: 18px; }
+    .profile-card { text-align: center; }
+    .profile-avatar { width: 72px; height: 72px; display: grid; place-items: center; margin: 0 auto 14px; border-radius: 50%; color: #092016; background: var(--green); font-size: 1.65rem; font-weight: 850; }
+    .data-list { display: grid; gap: 0; margin-top: 17px; text-align: left; }
+    .data-row { display: flex; justify-content: space-between; padding: 11px 0; border-top: 1px solid var(--line); font-size: .82rem; }
+    .data-row span:first-child { color: var(--muted); }
+    .badge-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .badge { padding: 13px 9px; border: 1px solid var(--line); border-radius: 10px; text-align: center; background: #121923; }
+    .badge.locked { opacity: .35; filter: grayscale(1); }
+    .badge-symbol { font-size: 1.35rem; }
+    .badge-name { margin-top: 5px; font-size: .67rem; font-weight: 700; }
+    .bar-list { display: grid; gap: 14px; }
+    .bar-item .meta-row { margin-bottom: 6px; }
+    .empty { padding: 38px; text-align: center; border: 1px dashed var(--line); border-radius: var(--radius); }
+
+    .modal {
+      position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 20px;
+      background: rgba(3,5,8,.78); backdrop-filter: blur(9px);
+    }
+    .modal.hidden { display: none; }
+    .modal-card { width: min(100%, 520px); padding: 29px; border: 1px solid var(--line-bright); border-radius: 18px; background: #111720; box-shadow: 0 30px 100px #000; }
+    .modal-card p { font-size: .9rem; }
+    .form-group { margin-top: 17px; }
+    .form-group label { display: block; margin-bottom: 7px; color: #c5ceda; font-size: .77rem; font-weight: 750; }
+    .field {
+      width: 100%; border: 1px solid var(--line); border-radius: 9px; padding: 11px 12px;
+      color: var(--text); background: #0b1017;
+    }
+    .field:focus { border-color: var(--blue); }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 9px; margin-top: 24px; }
+    .toast {
+      position: fixed; right: 22px; bottom: 22px; z-index: 80; max-width: 330px;
+      padding: 12px 16px; border: 1px solid var(--line-bright); border-radius: 10px;
+      background: #18212d; box-shadow: 0 14px 45px #000; font-size: .82rem;
+      animation: appear .25s ease-out;
+    }
+    .hidden { display: none !important; }
+
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; gap: 35px; padding-top: 18px; }
+      .hero-copy { padding-top: 20px; }
+      .grid-3 { grid-template-columns: 1fr 1fr; }
+      .lesson-layout { grid-template-columns: 1fr; }
+      .lesson-side { position: static; display: flex; justify-content: space-between; align-items: center; }
+      .lesson-steps { display: none; }
+      .profile-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 720px) {
+      .shell { padding: 0 18px; }
+      .topbar-inner { height: 64px; gap: 10px; }
+      .nav {
+        display: none; position: absolute; top: 64px; left: 0; right: 0; margin: 0;
+        padding: 10px 18px 16px; border-bottom: 1px solid var(--line); background: #0b0f15;
+      }
+      .nav.open { display: grid; grid-template-columns: 1fr 1fr; }
+      .nav button { text-align: left; }
+      .stats .level-pill { display: none; }
+      .stats { margin-left: auto; }
+      .menu-btn { display: block; }
+      .page { padding-top: 35px; }
+      .grid-2, .grid-3, .principle-grid { grid-template-columns: 1fr; }
+      .terminal-body { padding: 19px; font-size: .72rem; min-height: 280px; }
+      .section-head { align-items: start; flex-direction: column; }
+      .module-card { grid-template-columns: 44px 1fr; }
+      .module-arrow { display: none; }
+      .badge-grid { grid-template-columns: repeat(2, 1fr); }
+      .lesson-title-row { display: block; }
+      .welcome-strip { align-items: start; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <button class="brand" data-nav="home" aria-label="GitQuest home">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+            <circle cx="6" cy="5" r="2"></circle><circle cx="6" cy="19" r="2"></circle><circle cx="18" cy="10" r="2"></circle>
+            <path d="M6 7v10M8 7.5c2.5 0 3.5 2.5 3.5 4.5s1.5 3.5 4.5 3.5M8 16.5c2.5 0 3.5-1.5 3.5-3.5S13 10 16 10"></path>
+          </svg>
+        </span>
+        GitQuest
+      </button>
+      <nav class="nav" id="main-nav" aria-label="Main navigation">
+        <button data-nav="home">Home</button>
+        <button data-nav="training">Training</button>
+        <button data-nav="test">Test</button>
+        <button data-nav="progress">My Progress</button>
+      </nav>
+      <div class="stats">
+        <div class="level-pill"><span class="level-dot"></span><span id="header-level">Level 1</span><span id="header-xp">0 XP</span></div>
+        <div class="avatar" id="header-avatar">G</div>
+        <button class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="main-nav">Menu</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="app" class="shell"></main>
+  <input id="import-file" type="file" accept="application/json" class="hidden">
+
+  <div class="modal hidden" id="profile-modal" role="dialog" aria-modal="true" aria-labelledby="profile-title">
+    <form class="modal-card" id="profile-form">
+      <span class="eyebrow">Player setup</span>
+      <h2 id="profile-title">Start your Git journey</h2>
+      <p>We’ll tune the lesson order, scenarios, and test to your day-to-day work. Everything stays on this device.</p>
+      <div class="form-group">
+        <label for="profile-name">What should we call you?</label>
+        <input class="field" id="profile-name" name="name" required maxlength="40" autocomplete="name" placeholder="e.g. Andy">
+      </div>
+      <div class="form-group">
+        <label for="profile-role">Your role</label>
+        <select class="field" id="profile-role" name="role" required>
+          <option value="developer">Developer</option>
+          <option value="reviewer">Code Reviewer</option>
+          <option value="devops">DevOps / Release Engineer</option>
+          <option value="lead">Tech Lead</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="profile-experience">Git experience</label>
+        <select class="field" id="profile-experience" name="experience" required>
+          <option value="beginner">Beginner</option>
+          <option value="intermediate">Intermediate</option>
+          <option value="advanced">Advanced</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary hidden" id="cancel-profile">Cancel</button>
+        <button type="submit" class="btn btn-primary">Enter GitQuest</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    "use strict";
+
+    const ORG_POLICY = {
+      protectedBranches: ["main"],
+      normalIntegration: "merge-request",
+      featureSync: "rebase",
+      sharedBranchRebase: false,
+      cherryPick: ["hotfix", "exception"],
+      requireCI: true,
+      requireReview: true
+    };
+
+    const ROLE_NAMES = {
+      developer: "Developer",
+      reviewer: "Code Reviewer",
+      devops: "DevOps / Release Engineer",
+      lead: "Tech Lead"
+    };
+
+    const TOPIC_NAMES = {
+      foundations: "Git Foundations",
+      branching: "Branching Strategy",
+      mr: "Merge Requests",
+      rebase: "Rebase",
+      conflicts: "Conflict Resolution",
+      cherry: "Cherry-pick",
+      release: "Release & Hotfix",
+      cicd: "CI/CD",
+      review: "Code Review"
+    };
+
+    const LEVELS = [
+      { min: 0, name: "Git Beginner" },
+      { min: 180, name: "Branch Navigator" },
+      { min: 420, name: "MR Master" },
+      { min: 720, name: "Conflict Solver" },
+      { min: 1050, name: "Release Guardian" },
+      { min: 1450, name: "Git Strategist" }
+    ];
+
+    const ROLE_ORDER = {
+      developer: ["foundations", "branching", "mr", "rebase", "conflicts", "cherry", "release"],
+      reviewer: ["mr", "branching", "foundations", "rebase", "conflicts", "cherry", "release"],
+      devops: ["branching", "release", "cherry", "conflicts", "rebase", "mr", "foundations"],
+      lead: ["branching", "mr", "conflicts", "release", "rebase", "foundations", "cherry"]
+    };
+
+    const ROLE_WEIGHTS = {
+      developer: { foundations: 15, branching: 20, mr: 20, rebase: 20, conflicts: 15, release: 10 },
+      reviewer: { mr: 25, review: 20, branching: 15, rebase: 15, conflicts: 15, foundations: 10 },
+      devops: { branching: 20, release: 25, cherry: 15, cicd: 15, rebase: 10, conflicts: 15 },
+      lead: { branching: 20, mr: 20, review: 15, conflicts: 15, release: 20, rebase: 10 }
+    };
+
+    const LESSONS = [
+      {
+        id: "foundations",
+        title: "Git Foundations",
+        subtitle: "Build a mental model of commits, refs, HEAD, remotes, and your working tree.",
+        time: "8 min",
+        concept: "Git records snapshots as commits. A branch is a movable name pointing to one commit, while HEAD tells Git which branch or commit you currently have checked out.",
+        visual: `main\n  │\n  A───B───C  ← HEAD\n           \\\n            D───E  feature/payment`,
+        example: "Your working tree contains edits. Staging chooses exactly what enters the next commit; committing records that staged snapshot locally. A push publishes local commits to a remote.",
+        command: "git status\n\ngit add src/payment.js\ngit commit -m \"Add payment validation\"\ngit fetch origin\ngit push origin feature/payment",
+        practices: [
+          ["fetch", "Downloads remote refs without changing your working branch."],
+          ["pull", "Fetches and then integrates remote changes into the current branch."],
+          ["push", "Publishes local commits to a remote branch."],
+          ["HEAD", "Identifies what is currently checked out."]
+        ],
+        scenario: {
+          prompt: "You want to inspect new commits from origin without changing your current working branch. What should you run?",
+          options: ["git fetch origin", "git pull --force", "git push origin", "git reset --hard origin/main"],
+          answer: 0,
+          explanation: "Fetch updates remote-tracking references such as origin/main but does not merge, rebase, or alter your working files. It is the safe inspect-first action.",
+          optionFeedback: [
+            "This updates remote-tracking references while leaving your branch and working files untouched.",
+            "Pull integrates remote changes into your current branch; --force is not a safe way to inspect.",
+            "Push publishes local commits; it does not inspect incoming remote commits.",
+            "A hard reset changes the current branch and discards local working-tree changes."
+          ]
+        }
+      },
+      {
+        id: "branching",
+        title: "Branching Strategy",
+        subtitle: "Keep production stable with short-lived branches and protected integration.",
+        time: "9 min",
+        concept: `In this organization, ${ORG_POLICY.protectedBranches.join(", ")} represents production. Work happens on short-lived feature branches and reaches main through a ${ORG_POLICY.normalIntegration === "merge-request" ? "Merge Request" : ORG_POLICY.normalIntegration}${ORG_POLICY.requireCI ? " with CI" : ""}${ORG_POLICY.requireReview ? " and review" : ""}.`,
+        visual: `                 A1───A2  feature/A\n                /       \\\nmain ─── M0 ───•─────────M1  ← reviewed merge\n                          │\n                       production`,
+        example: "Branch from an up-to-date main, keep scope narrow, sync regularly, then delete the feature branch after merge. Release branches exist only when parallel release maintenance requires them.",
+        command: "git switch main\ngit pull --ff-only\ngit switch -c feature/JIRA-248-payment-timeout",
+        practices: [
+          [`Protected ${ORG_POLICY.protectedBranches.join(", ")}`, "No direct push; changes pass consistent gates."],
+          ["Short-lived", "Smaller divergence means lower merge and review risk."],
+          ["One purpose", "A focused branch is easier to test, review, and revert."],
+          ["Avoid proliferation", "Create branches for work, not permanent process stages."]
+        ],
+        scenario: {
+          prompt: "A feature branch has been open for six weeks and now conflicts heavily with main. What practice would have reduced the risk most?",
+          options: ["Create more permanent integration branches", "Keep the branch short-lived and sync it frequently", "Disable main protection", "Cherry-pick main into the branch daily"],
+          answer: 1,
+          explanation: "Short-lived, focused branches limit divergence. Frequent deliberate syncing catches conflicts while the relevant context is still fresh.",
+          optionFeedback: [
+            "More permanent branches add process and do not reduce how far this feature diverges.",
+            "Smaller, frequent integrations surface conflicts early, while the change context is still clear.",
+            "Removing protection weakens production safeguards and does not prevent branch divergence.",
+            "Cherry-picking all of main repeatedly is cumbersome and can duplicate changes; integrate deliberately instead."
+          ]
+        }
+      },
+      {
+        id: "mr",
+        title: "Merge Requests",
+        subtitle: "Use review gates to turn individual changes into trusted team changes.",
+        time: "9 min",
+        concept: `A Merge Request is the ${ORG_POLICY.normalIntegration === "merge-request" ? "normal integration mechanism" : "configured integration path"}: it connects intent, implementation, automated evidence, and human judgment before a protected branch changes.`,
+        flow: ["Feature branch", "Merge Request", "CI + tests", "AI review", "Human review", "main"],
+        example: "Link the Jira ticket, keep the MR focused, explain risk and test evidence, and resolve feedback with new commits. AI can flag patterns; accountable humans still judge intent and system impact.",
+        command: "git push -u origin feature/JIRA-248-payment-timeout\n# Open MR → link JIRA-248 → wait for gates",
+        practices: [
+          ["Small scope", "Reviewers can reason about a coherent change."],
+          ["Green CI", "Do not merge known failures or bypass evidence."],
+          ["Respond visibly", "Update the branch and explain how feedback was addressed."],
+          ["Human decision", "AI review assists; it does not own approval."]
+        ],
+        scenario: {
+          prompt: "Your feature is complete, but the MR pipeline has a failing integration test. What should you do?",
+          options: ["Push directly to main", "Merge and create a follow-up ticket", "Investigate and fix the failure before requesting merge", "Ask a reviewer to ignore the gate"],
+          answer: 2,
+          explanation: "A failing gate is evidence that the change is not ready. Diagnose whether the product or test is wrong, update the branch, and let the pipeline run again.",
+          optionFeedback: [
+            "Direct pushes bypass the protected review path and leave the failure unresolved.",
+            "A follow-up ticket does not protect users from a failure in the change being merged now.",
+            "Find whether the code or test is at fault, fix it, and rerun the required checks before merging.",
+            "Ignoring a failing gate removes evidence rather than resolving the underlying risk."
+          ]
+        }
+      },
+      {
+        id: "rebase",
+        title: "Rebase with Confidence",
+        subtitle: "Replay private work for a clean history without disrupting teammates.",
+        time: "8 min",
+        concept: `Rebase moves commits by replaying their changes on a new base. The replay creates new commit IDs, so it is appropriate for your private feature branch. Shared-branch rebase is ${ORG_POLICY.sharedBranchRebase ? "allowed by policy but still requires coordination" : "not allowed because others may have based work on that history"}.`,
+        visual: `BEFORE\nA───B───C  main\n     \\\n      D───E  feature\n\nAFTER\nA───B───C  main\n         \\\n          D′───E′  feature`,
+        example: "Your private feature branch is behind main. Fetch first, rebase onto the remote-tracking main, resolve any conflicts, test, then update the remote safely.",
+        command: "git fetch origin\ngit rebase origin/main\n# after tests\ngit push --force-with-lease",
+        practices: [
+          ["IDs change", "D′ and E′ contain replayed changes but are new commits."],
+          ["Private branches", "Rewriting is safe only when you own the history."],
+          ["Force with lease", "Fails if the remote changed unexpectedly, unlike --force."],
+          ["Shared branch", "Merge instead; do not invalidate teammates’ commit ancestry."]
+        ],
+        scenario: {
+          prompt: "Your private branch was rebased and is already on origin. How should you update it?",
+          options: ["git push --force", "git push --force-with-lease", "git reset --hard", "git push directly to main"],
+          answer: 1,
+          explanation: "--force-with-lease checks that the remote still matches what you last observed. Plain --force can overwrite someone else’s unexpected update.",
+          optionFeedback: [
+            "Plain force can overwrite a teammate's remote update without checking whether the remote moved.",
+            "The lease refuses the rewrite if the remote changed unexpectedly, reducing the chance of clobbering work.",
+            "A hard reset changes local history and does not publish the rebased branch safely.",
+            "The feature branch should be updated, not pushed directly into protected main."
+          ]
+        }
+      },
+      {
+        id: "conflicts",
+        title: "Conflict Resolution",
+        subtitle: "Resolve intent, not just markers, and verify the resulting behavior.",
+        time: "10 min",
+        concept: "A conflict means Git cannot safely infer the intended result. The job is to understand both changes, choose the correct behavior, remove markers, stage the resolution, continue, and test.",
+        visual: `<<<<<<< HEAD\ntimeout = 30\n=======\ntimeout = 60\n>>>>>>> feature/payment`,
+        example: "Do not blindly choose ours or theirs. Ask why each timeout changed. The correct output might be 30, 60, or a configurable value that combines both intentions.",
+        command: "# edit and remove all markers\ngit add config/payment.js\ngit rebase --continue\n# run relevant tests, then update the MR",
+        practices: [
+          ["Understand", "Read the surrounding code and both commits’ intent."],
+          ["Decide", "Choose the product behavior—not merely one side."],
+          ["Clean", "Remove every marker and stage the resolved file."],
+          ["Verify", "Run tests because syntactically clean can still be wrong."]
+        ],
+        scenario: {
+          prompt: "After editing a conflict during rebase, what is the correct next sequence?",
+          options: ["Push immediately", "git add, git rebase --continue, test, then update the branch", "Choose ours and force push", "Delete both versions and merge main"],
+          answer: 1,
+          explanation: "Staging tells Git the conflict is resolved. Continue the rebase, verify the integrated behavior, and only then update the remote branch.",
+          optionFeedback: [
+            "The rebase is not complete until Git records the resolution and replays the remaining commits.",
+            "Stage the resolved file, continue the rebase, run relevant tests, and then update the remote branch.",
+            "Blindly choosing one side can discard required behavior, and force-pushing before verification is unsafe.",
+            "Deleting both versions can remove valid behavior; resolve intent rather than discarding changes."
+          ]
+        },
+        simulator: true
+      },
+      {
+        id: "cherry",
+        title: "Cherry-pick",
+        subtitle: "Apply one targeted commit when the normal integration path is not appropriate.",
+        time: "6 min",
+        concept: `Cherry-pick applies the change introduced by a specific commit onto your current branch, creating a new commit. Policy reserves it for ${ORG_POLICY.cherryPick.join(" and ")} work, not the default feature workflow.`,
+        visual: `main      A───B───C───H  (hotfix)\n           \\\nrelease     R1───R2───H′  ← cherry-pick H`,
+        example: "A production hotfix on main must also reach a supported release branch. After review and testing, cherry-pick that single fix rather than unrelated newer work.",
+        command: "git switch release/2.4\ngit cherry-pick H\n# test, push, and open the required MR",
+        practices: [
+          ["Good fit", "Backport a specific reviewed fix or emergency patch."],
+          ["New commit", "H′ has a different ID from H."],
+          ["Conflict risk", "The old branch context may differ; test carefully."],
+          ["Not normal flow", "Features should use branches and Merge Requests."]
+        ],
+        scenario: {
+          prompt: "A single security fix from main must go to a supported release branch without other new features. What fits best?",
+          options: ["Rebase the release branch onto main", "Cherry-pick the reviewed fix and test it", "Reset the release branch to main", "Force push main over the release branch"],
+          answer: 1,
+          explanation: "This is a targeted backport: the intended exception for cherry-pick. The resulting release commit still needs validation and normal review controls.",
+          optionFeedback: [
+            "Rebasing would move the release branch's broader history, not just the one approved fix.",
+            "Cherry-pick applies only the reviewed patch; test and review the resulting backport on the release branch.",
+            "Resetting to main could import unrelated changes and rewrite the release line.",
+            "Replacing the release branch with main is destructive and bypasses the targeted backport."
+          ]
+        }
+      },
+      {
+        id: "release",
+        title: "Release & Hotfix",
+        subtitle: "Ship deliberately, recover safely, and preserve shared history.",
+        time: "9 min",
+        concept: "Main remains the trusted integration line. Tags identify immutable release points; release branches support versions only when needed. Production fixes return through review and are propagated deliberately.",
+        flow: ["Feature", "MR", "main", "Release tag", "Production"],
+        example: "For an incident, branch a hotfix from the correct production point, make the smallest safe change, run expedited gates, merge it, tag or deploy, and backport if a supported release line also needs it.",
+        command: "git revert <bad-shared-commit>\ngit push origin hotfix/payment-timeout\n# open expedited MR, test, merge, tag",
+        practices: [
+          ["Tag releases", "An immutable name makes deployment and diagnosis reproducible."],
+          ["Revert shared history", "A new inverse commit is safer than rewriting published ancestry."],
+          ["Small hotfix", "Reduce blast radius during an incident."],
+          ["Propagate", "Ensure the fix is not lost from another active release line."]
+        ],
+        scenario: {
+          prompt: "A commit already deployed from main caused an incident. The branch is shared and protected. What is the safest immediate Git action?",
+          options: ["Rewrite main with reset --hard", "Delete main and recreate it", "Revert the bad commit through an expedited MR", "Rebase main before the bad commit"],
+          answer: 2,
+          explanation: "Revert records an auditable inverse change without invalidating anyone’s shared history. It works with protected-branch gates and can itself be reviewed and tested.",
+          optionFeedback: [
+            "Reset rewrites shared history and can invalidate teammates' work; it also bypasses the review path.",
+            "Deleting a protected shared branch is disruptive and does not safely undo the deployed change.",
+            "Revert creates an auditable inverse commit while preserving shared ancestry; expedite review and validation.",
+            "Rebasing shared main rewrites history and is not a safe incident rollback."
+          ]
+        }
+      }
+    ];
+
+    const ASSESSMENT_QUESTION_COUNT = 25;
+    const QUESTION_BANK = [
+      q("f1", "foundations", "You want to see remote changes without modifying your current branch. What do you do?", ["git fetch origin", "git pull", "git reset --hard", "git push"], 0, "Fetch updates remote-tracking refs without integrating them.", ["Updates remote-tracking refs without integrating changes.", "Pull also integrates changes into the current branch.", "A hard reset changes local state and can discard work.", "Push publishes local commits; it does not inspect incoming work."]),
+      q("f2", "foundations", "You edited three files but want only one in the next commit. What is the best approach?", ["Commit all and revert two", "Stage only the intended file, then commit", "Push the working tree", "Create a tag"], 1, "The staging area defines the exact snapshot for the next commit.", ["This creates unnecessary history and may publish unwanted changes.", "Stage only the intended file so the commit contains the requested snapshot.", "A push publishes commits; it cannot select unstaged files.", "A tag names a commit; it does not choose files for a commit."]),
+      q("f3", "foundations", "What does HEAD normally identify while you work?", ["The oldest commit", "The remote server", "Your checked-out branch or commit", "Every untracked file"], 2, "HEAD identifies the currently checked-out position.", ["HEAD usually points to the current position, not necessarily the oldest commit.", "A remote is a separate repository reference, not what HEAD identifies.", "HEAD identifies a current branch or commit, not files in the working tree.", "Untracked files are not identified by HEAD."]),
+      q("b1", "branching", "You start a small feature for a protected main branch. Which workflow best matches policy?", ["Commit directly to main", "Short-lived branch, focused MR, CI and review", "Permanent personal branch", "Release branch for every task"], 1, "A short-lived feature branch and gated MR keep integration safe and reviewable.", ["Direct commits bypass the protected integration and review gates.", "This keeps scope reviewable and uses the required automated and human checks.", "A permanent branch accumulates divergence and blurs the purpose of work.", "Release branches are for supported release maintenance, not every feature."]),
+      q("b2", "branching", "A branch has accumulated unrelated fixes and features. What is the primary review risk?", ["Its name is too long", "The scope is harder to reason about, test, and revert", "Git cannot store it", "It cannot have CI"], 1, "Mixed scope obscures intent and increases review and rollback risk.", ["Branch-name length is not the core risk described.", "Unrelated changes obscure intent and make testing, review, and rollback harder.", "Git can store branches containing many commits; this is a collaboration risk.", "CI can run on mixed-scope branches, though the results are harder to interpret."]),
+      q("b3", "branching", "Why avoid long-lived feature branches?", ["Branches cost money", "They increase divergence and integration risk", "They disable commits", "They prevent tags"], 1, "Long divergence accumulates conflicts and delayed feedback.", ["Local Git branches have no per-branch fee.", "Changes on main accumulate, making integration and conflict resolution riskier.", "Long-lived branches can still receive commits.", "Tags can be created regardless of feature-branch lifetime."]),
+      q("m1", "mr", "Your MR has green tests but an unresolved reviewer concern about authorization. What should happen?", ["Merge because CI passed", "Resolve the concern and obtain approval", "Close the ticket only", "Push directly to main"], 1, "Automated evidence does not replace human review of intent and risk.", ["Passing tests do not settle a security or design concern raised in review.", "Address the authorization concern and follow the required approval policy.", "Closing a ticket does not resolve the code risk or review requirement.", "A direct push bypasses the protected review process."]),
+      q("m2", "mr", "An AI review reports a possible null path. What is the best response?", ["Trust and merge its suggested code blindly", "Dismiss all AI comments", "Investigate the path, test it, and let a human own the decision", "Disable human review"], 2, "AI assists discovery; accountable engineers validate context and outcomes.", ["AI suggestions need validation against the code and intended behavior.", "A potentially real failure path deserves investigation, not blanket dismissal.", "Trace the path, add evidence such as a test, and have an accountable engineer decide.", "AI review does not replace human judgment or approval."]),
+      q("m3", "mr", "The MR implements JIRA-248 plus an unrelated refactor. What is preferable?", ["Keep both to save an MR", "Split unrelated work so scope and rollback remain clear", "Remove the Jira link", "Bypass tests"], 1, "A coherent MR aligns intent, review, testing, and reversibility.", ["Combining unrelated work makes review and rollback harder, not simpler.", "Separate the refactor so each change has clear intent and a focused review.", "The ticket link helps explain traceability and should not be removed.", "Tests provide evidence; bypassing them does not improve scope clarity."]),
+      q("r1", "rebase", "Your private branch is behind origin/main. What is the preferred synchronization?", ["Rebase it onto origin/main", "Rebase main onto it", "Reset main", "Cherry-pick every main commit"], 0, "Replaying a private branch onto current main keeps a linear feature history.", ["Rebase the private work onto the updated base; this leaves main untouched.", "Rebasing main would rewrite the shared integration branch.", "Resetting main risks discarding or rewriting shared commits.", "Cherry-picking every commit is unnecessary and can create duplicate commits."]),
+      q("r2", "rebase", "Why should you avoid rebasing a shared branch?", ["It makes files read-only", "It rewrites commit IDs that teammates may depend on", "It deletes remotes", "It disables review"], 1, "Rewritten ancestry disrupts collaborators with work based on old IDs.", ["Rebase does not make files read-only.", "Rewritten IDs can invalidate collaborators' existing ancestry and require coordination.", "Rebase does not delete configured remotes.", "Review can still happen after a rebase; shared history is the issue."]),
+      q("r3", "rebase", "After rebasing your remote private branch, why use --force-with-lease?", ["It skips CI", "It checks for unexpected remote updates before replacing history", "It never rewrites history", "It merges main"], 1, "The lease guards against overwriting a remote update you did not observe.", ["The option changes push behavior; it does not bypass CI.", "It refuses to update if the remote changed since your last observation.", "The rebased commits already have new IDs, so the update rewrites remote history.", "It does not merge main; it safely publishes the rebased branch."]),
+      q("c1", "conflicts", "A conflict shows timeout values 30 and 60. What should guide resolution?", ["Always ours", "Always theirs", "The intended behavior and context of both changes", "The newest-looking line"], 2, "Conflict resolution is a product and engineering decision, not marker removal alone.", ["Choosing ours automatically may discard the other intended behavior.", "Choosing theirs automatically may discard the current branch's required behavior.", "Understand both changes and preserve the intended combined behavior.", "Text appearance or order does not establish which value is correct."]),
+      q("c2", "conflicts", "You removed conflict markers during rebase. What comes next?", ["Stage the file and continue rebase", "Force push immediately", "Run git init", "Delete the branch"], 0, "Stage the resolved file, continue, then verify behavior.", ["Stage the resolution, continue the rebase, and test before updating the remote.", "The rebase must finish and the result be verified before pushing.", "Initializing a repository is unrelated and can disrupt repository metadata.", "Deleting the branch abandons the work rather than resolving the conflict."]),
+      q("c3", "conflicts", "The conflicted file compiles after resolution. Are you done?", ["Yes, compilation proves behavior", "No, run relevant tests and inspect integrated behavior", "Yes, if ours was chosen", "No, reset main"], 1, "A syntactically valid resolution can still combine behavior incorrectly.", ["Compilation checks syntax and types, not all expected behavior.", "Run focused tests and review the integrated result for semantic mistakes.", "Choosing ours does not prove the other change was safely preserved.", "Resetting main is unrelated and risks changing shared history."]),
+      q("h1", "cherry", "When is cherry-pick a good fit?", ["Normal integration of every feature", "Targeted backport of one reviewed hotfix", "Synchronizing all of main", "Replacing review"], 1, "Cherry-pick is useful for exceptional targeted movement.", ["Normal feature work should usually integrate through its branch and MR.", "This moves one selected fix to a release line without unrelated commits.", "Cherry-picking all of main is error-prone compared with normal integration.", "A cherry-pick does not provide review or approval."]),
+      q("h2", "cherry", "What happens to the commit ID when H is cherry-picked to another branch?", ["It stays H", "A new commit ID is created", "The branch is deleted", "The remote ID changes only"], 1, "Applying the patch in a new context creates a new commit.", ["The original commit remains; the new branch receives a distinct commit.", "The commit gets a new ID because its parent/context differs.", "Cherry-pick applies a change and does not delete the source branch.", "Commit identity changes in the new local history, not only on a remote."]),
+      q("x1", "release", "A published main commit must be undone safely. Choose the best action.", ["reset --hard and force push", "git revert through review", "Interactive rebase main", "Delete its files manually without a commit"], 1, "Revert preserves shared ancestry and creates an auditable inverse commit.", ["This rewrites shared history and can disrupt collaborators.", "Revert adds an inverse commit that can pass normal review and validation.", "Interactive rebase rewrites published history and is not a safe shared rollback.", "Editing files without a commit leaves no auditable, reviewable rollback."]),
+      q("x2", "release", "What does a release tag provide?", ["A mutable personal workspace", "An immutable name for a specific release commit", "A replacement for CI", "A secret branch"], 1, "Tags make deployments and incident references reproducible.", ["A tag identifies a commit; it is not a workspace for edits.", "A release tag names the exact commit associated with a release.", "A tag records identity, not automated validation.", "A tag is a reference, not a hidden branch."]),
+      q("x3", "release", "A production hotfix is merged to a release branch but main still lacks it. What risk remains?", ["The fix may be lost in future releases", "Tags stop working", "Git cannot merge again", "The branch becomes protected"], 0, "Fixes must be propagated to the continuing integration line.", ["Without propagation, later releases from main can reintroduce the fixed bug.", "Missing the fix on main does not disable tags.", "Git can merge the fix or an equivalent change into main later.", "Protection settings do not change because a hotfix was merged."]),
+      q("ci1", "cicd", "A flaky test fails in the MR pipeline. What is the responsible action?", ["Retry until green and ignore it", "Investigate the product/test failure before merge", "Disable all CI", "Push direct to main"], 1, "A flaky signal is still a reliability problem; diagnose rather than bypass it.", ["A lucky retry does not establish that the code is safe or the test is healthy.", "Determine whether the code or test is faulty, then restore reliable evidence before merge.", "Disabling all CI removes useful protection rather than diagnosing the failure.", "A direct push bypasses gates and leaves the failure unresolved."]),
+      q("ci2", "cicd", "Why require CI on protected main?", ["To replace review", "To apply repeatable checks before integration", "To avoid local tests forever", "To create branches"], 1, "CI provides consistent automated evidence at the integration boundary.", ["Automated checks complement, rather than replace, human review.", "Repeatable checks catch regressions consistently before protected integration.", "CI does not remove the value of local testing and debugging.", "CI validates changes; it does not create branches."]),
+      q("rv1", "review", "A large MR is hard to review. What feedback is most useful?", ["Approve to save time", "Ask for a smaller coherent scope and explain the risk", "Comment only on formatting", "Move it directly to main"], 1, "Review quality depends on a change being understandable and bounded.", ["Approval without understanding does not reduce the risk of a hard-to-review change.", "Request a focused, coherent change and explain how size affects review confidence.", "Formatting alone does not address the difficulty of evaluating a large change.", "Moving it directly to main bypasses review rather than improving it."]),
+      q("rv2", "review", "A reviewer requests a change, and the author disagrees. What is the best next step?", ["Silently ignore it", "Discuss intent and evidence, then document the resolution", "Force push over the MR", "Close the repository"], 1, "Collaborative review resolves reasoning, not just comment status.", ["Silence leaves the concern unresolved and obscures the decision.", "Discuss the requirement and evidence, then record the agreed resolution.", "Force-pushing does not address the reviewer's concern and can disrupt work.", "Closing the repository is unrelated and disproportionate."]),
+      q("s1", "branching", "Two developers actively share a feature branch that is behind main. What is safer?", ["Rebase and force push without warning", "Coordinate and merge main into the shared branch", "Delete their commits", "Reset main"], 1, "Merging avoids rewriting the ancestry teammates already share.", ["Rebase rewrites shared commits; doing it without coordination can disrupt teammates.", "A coordinated merge brings in main while preserving the shared branch's ancestry.", "Deleting commits discards teammates' work.", "Resetting main changes the protected integration branch and does not sync the feature."]),
+      q("f4", "foundations", "You staged a file, then edited it again before committing. What should you check?", ["Commit immediately; staging always tracks later edits", "Use git diff and git diff --cached to inspect working and staged changes", "Run git push to refresh the index", "Create a branch to stage the new edit"], 1, "The index captures a snapshot; inspect both staged and unstaged changes before committing.", ["Later edits are not automatically included in the already-staged snapshot.", "Compare the index and working tree so the commit includes exactly what you intend.", "Push publishes commits and does not update or inspect your staging area.", "Branches do not determine which edits are staged."]),
+      q("f5", "foundations", "You accidentally committed a generated file locally and have not shared the commit. What is a safe next step?", ["Assess the commit and amend it to remove the generated file", "Force push it so nobody notices", "Delete the repository", "Tag the generated file"], 0, "For an unpublished local commit, amend or reset carefully to remove the unintended file before sharing.", ["Because the commit is private, you can correct it before publishing and verify the index.", "Publishing does not remove the generated file and may spread the mistake.", "Deleting the repository is unnecessary and risks unrelated work.", "A tag only names a commit; it does not remove a file."]),
+      q("b4", "branching", "A teammate asks for a quick fix while your feature branch contains unfinished work. What keeps the fix isolated?", ["Commit it onto the current feature branch regardless", "Start a separate branch from the appropriate updated base", "Make the change directly on main", "Rename the feature branch"], 1, "A separate focused branch keeps unrelated work independently reviewable and releasable.", ["Combining unrelated work makes review, testing, and rollback less clear.", "Use a separate branch from the correct base so the urgent fix can follow its own checks.", "Directly changing protected main bypasses the normal integration process.", "Renaming a branch does not separate the changes already on it."]),
+      q("m4", "mr", "The MR pipeline is green, but the latest commit was pushed after the last approval. What should you verify?", ["Nothing; green CI means the approval still applies", "Follow repository policy for re-review of the latest diff before merge", "Delete the pipeline result", "Push the commit directly to main"], 1, "Approval should cover the change being merged; a new diff may require renewed review.", ["CI does not establish that reviewers examined the latest diff.", "Check whether the new commit changes approved code and request renewed review when policy requires it.", "Removing pipeline evidence does not resolve whether approval covers the current diff.", "A direct push bypasses review and protected-branch policy."]),
+      q("r4", "rebase", "A rebase stops on a conflict, and you realize you chose the wrong base. What can you do safely?", ["Use git rebase --abort to return to the pre-rebase state", "Force push the partial result", "Reset the remote main branch", "Delete the conflicted file"], 0, "Aborting a rebase restores the branch to its state before the rebase began.", ["Abort stops the in-progress rebase and restores the original branch state.", "A partial rebase is not ready to publish and force-pushing could lose work.", "The conflict is on your feature operation; resetting shared main is unrelated and destructive.", "Deleting the file may discard both sides' work rather than safely undo the operation."]),
+      q("c4", "conflicts", "A conflict resolution removes markers but drops a validation check from one side. What should you do before continuing?", ["Keep the simpler version because it compiles", "Review both changes' intent and restore required validation, then test", "Choose the longest version", "Skip tests to avoid delaying the merge"], 1, "Conflict resolution must preserve intended behavior from both changes, including security and validation.", ["Compiling does not prove that required validation remains.", "Compare both sides, preserve necessary checks, and test the integrated behavior.", "Length does not indicate correctness or completeness.", "Skipping tests removes evidence precisely when integration risk is elevated."]),
+      q("h3", "cherry", "A hotfix commit depends on an earlier helper commit that is absent from the release branch. What should you do?", ["Cherry-pick only the hotfix regardless of dependencies", "Identify and validate the required dependency or backport the complete minimal change", "Reset the release branch to main", "Skip the hotfix"], 1, "A targeted backport must include required dependencies without importing unrelated work.", ["The patch may fail or behave incorrectly without the helper it depends on.", "Inspect dependencies and backport the smallest complete, tested change set.", "Resetting the release branch would import unrelated history and change its purpose.", "Ignoring the incident does not deliver the required fix."]),
+      q("x4", "release", "A release tag points to the wrong commit and has already been published. What is the safest response?", ["Silently move the tag", "Coordinate a corrected release/tag according to policy and communicate the published reference", "Rewrite main to match the tag", "Delete the release branch"], 1, "Published release references should remain auditable; correct the release deliberately and communicate the change.", ["Moving a published tag silently can break reproducibility for consumers.", "Follow release policy for a corrected immutable reference and clearly notify users.", "Rewriting main does not correct the published tag and can disrupt shared history.", "Deleting a branch is unrelated and risks losing supported release work."]),
+      q("ci3", "cicd", "A required deployment check is pending, but the release window is closing. What is the safe decision?", ["Merge because the check is probably fine", "Wait for the required evidence or use an explicitly approved emergency process", "Disable the check permanently", "Mark the check successful manually"], 1, "A pending required gate has not supplied evidence; exceptions must use an authorized emergency process.", ["Assuming success bypasses the required release safeguard.", "Wait for the result or follow a documented, authorized exception path.", "Permanently disabling the check weakens future releases for one timing issue.", "Falsifying a check result creates misleading release evidence."]),
+      q("rv3", "review", "A change request appears stylistic, but the repository has no written convention. What should a reviewer do?", ["Block indefinitely until the author guesses", "Explain the concern and distinguish preference from correctness or policy", "Approve without reading the change", "Rewrite the author's branch without asking"], 1, "Actionable review distinguishes required correctness issues from preferences and explains the reasoning.", ["Unexplained blocking does not help the author make a good decision.", "State the rationale and whether the request is a requirement, risk, or optional preference.", "Approval without review provides no meaningful confidence.", "Changing someone else's branch without agreement undermines collaboration and ownership."]),
+      q("s2", "branching", "Your local feature branch is behind origin/main, and nobody else uses it. What is a reasonable sync workflow?", ["Fetch, inspect, then rebase onto origin/main and test", "Reset origin/main to the feature branch", "Delete remote main", "Cherry-pick random commits until it looks current"], 0, "Fetch and inspect first, then rebase private work onto the updated base and verify it.", ["The private branch can be replayed onto the fetched base without rewriting teammates' work.", "Remote-tracking main represents shared work and should not be reset to a feature branch.", "Deleting the shared base is destructive and unrelated to synchronization.", "Random cherry-picks can omit dependencies or duplicate changes."])
+    ];
+
+    function q(id, topic, prompt, options, answer, explanation, optionFeedback) {
+      return { id, topic, prompt, options, answer, explanation, optionFeedback };
+    }
+
+    function renderAnswerFeedback(item, selected) {
+      const correct = selected === item.answer;
+      const selectedReason = item.optionFeedback[selected];
+      const correctReason = item.optionFeedback[item.answer];
+      return `<div class="feedback ${correct ? "" : "bad"}">
+        <strong>${correct ? "Correct decision" : "Not quite"}</strong>
+        <p class="answer-reason"><strong>${correct ? "Why this works:" : "Why your choice doesn't fit:"}</strong> ${escapeHTML(selectedReason)}</p>
+        ${correct ? "" : `<p class="answer-reason"><strong>Better answer: ${escapeHTML(item.options[item.answer])}</strong><br>${escapeHTML(correctReason)}</p>`}
+      </div>`;
+    }
+
+    const Defaults = () => ({
+      profile: { name: "", role: "developer", experience: "beginner" },
+      training: { completed: [], scores: {} },
+      test: { attempts: [], bestScore: 0, topicCorrect: {}, topicTotal: {}, answeredQuestionIds: [] },
+      game: { xp: 0, streak: 0, lastVisit: "", badges: [] }
+    });
+
+    const StorageAdapter = {
+      key: "gitquest-progress-v1",
+      get() {
+        try {
+          const value = localStorage.getItem(this.key);
+          return value ? JSON.parse(value) : null;
+        } catch (_) {
+          return null;
+        }
+      },
+      set(data) {
+        try {
+          localStorage.setItem(this.key, JSON.stringify(data));
+          return true;
+        } catch (_) {
+          return false;
+        }
+      },
+      clear() {
+        try { localStorage.removeItem(this.key); } catch (_) {}
+      }
+    };
+
+    const State = {
+      data: mergeState(Defaults(), StorageAdapter.get()),
+      view: "home",
+      activeLesson: null,
+      lessonAnswer: null,
+      test: null,
+      save() {
+        updateBadges(this.data);
+        StorageAdapter.set(this.data);
+        updateHeader();
+      }
+    };
+
+    function mergeState(base, saved) {
+      if (!saved || typeof saved !== "object") return base;
+      return {
+        profile: { ...base.profile, ...(saved.profile || {}) },
+        training: { ...base.training, ...(saved.training || {}) },
+        test: {
+          ...base.test,
+          ...(saved.test || {}),
+          answeredQuestionIds: Array.isArray(saved.test?.answeredQuestionIds)
+            ? saved.test.answeredQuestionIds
+            : base.test.answeredQuestionIds
+        },
+        game: { ...base.game, ...(saved.game || {}) }
+      };
+    }
+
+    function escapeHTML(value) {
+      return String(value).replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[char]));
+    }
+
+    function todayKey(date = new Date()) {
+      return date.toISOString().slice(0, 10);
+    }
+
+    function updateStreak() {
+      const today = todayKey();
+      const last = State.data.game.lastVisit;
+      if (last === today) return;
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      State.data.game.streak = last === todayKey(yesterday) ? State.data.game.streak + 1 : 1;
+      State.data.game.lastVisit = today;
+      State.save();
+    }
+
+    function currentLevel() {
+      let index = 0;
+      LEVELS.forEach((level, i) => { if (State.data.game.xp >= level.min) index = i; });
+      return { ...LEVELS[index], number: index + 1, next: LEVELS[index + 1] || null };
+    }
+
+    function updateBadges(data) {
+      const earned = [];
+      if (data.training.completed.length) earned.push("first");
+      if (data.training.completed.includes("branching")) earned.push("branch");
+      if (data.training.completed.includes("mr")) earned.push("merge");
+      if (data.training.completed.includes("rebase")) earned.push("rebase");
+      if (data.training.completed.includes("conflicts")) earned.push("conflict");
+      if (data.training.completed.includes("release")) earned.push("release");
+      if (data.test.bestScore >= 80 && data.training.completed.length === LESSONS.length) earned.push("strategist");
+      data.game.badges = earned;
+    }
+
+    function getAccuracy(topic) {
+      const total = State.data.test.topicTotal[topic] || 0;
+      return total ? (State.data.test.topicCorrect[topic] || 0) / total : null;
+    }
+
+    function recommendations() {
+      const weak = Object.keys(TOPIC_NAMES)
+        .map(topic => ({ topic, accuracy: getAccuracy(topic) }))
+        .filter(item => item.accuracy !== null && item.accuracy < .7)
+        .sort((a, b) => a.accuracy - b.accuracy);
+      const incomplete = orderedLessons().filter(lesson => !State.data.training.completed.includes(lesson.id));
+      const mappedWeak = weak.map(item => LESSONS.find(lesson => lesson.id === item.topic)).filter(Boolean);
+      return [...new Map([...mappedWeak, ...incomplete].map(item => [item.id, item])).values()];
+    }
+
+    function orderedLessons() {
+      const order = ROLE_ORDER[State.data.profile.role] || ROLE_ORDER.developer;
+      return [...LESSONS].sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
+    }
+
+    function updateHeader() {
+      const level = currentLevel();
+      document.getElementById("header-level").textContent = `Level ${level.number}`;
+      document.getElementById("header-xp").textContent = `${State.data.game.xp} XP`;
+      document.getElementById("header-avatar").textContent = (State.data.profile.name || "G").trim().charAt(0).toUpperCase();
+    }
+
+    function setView(view) {
+      State.view = view;
+      State.activeLesson = null;
+      State.lessonAnswer = null;
+      State.test = null;
+      document.querySelectorAll("[data-nav]").forEach(button => button.classList.toggle("active", button.dataset.nav === view));
+      document.getElementById("main-nav").classList.remove("open");
+      document.getElementById("menu-btn").setAttribute("aria-expanded", "false");
+      render();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function render() {
+      const app = document.getElementById("app");
+      if (State.activeLesson) app.innerHTML = renderLesson(State.activeLesson);
+      else if (State.view === "home") app.innerHTML = renderHome();
+      else if (State.view === "training") app.innerHTML = renderTraining();
+      else if (State.view === "test") app.innerHTML = renderTest();
+      else app.innerHTML = renderProgress();
+    }
+
+    function renderHome() {
+      const profile = State.data.profile;
+      const complete = State.data.training.completed.length;
+      const rec = recommendations()[0] || orderedLessons()[0];
+      const roleMessage = {
+        developer: "Build clean branches and ship reviewable changes.",
+        reviewer: "Sharpen review judgment and history awareness.",
+        devops: "Practice releases, hotfixes, and safe recovery.",
+        lead: "Design collaboration paths that keep delivery safe."
+      }[profile.role];
+      return `
+        <section class="page">
+          <div class="hero">
+            <div class="hero-copy">
+              <span class="eyebrow">Learn by deciding</span>
+              <h1>Master Git.<br><span class="gradient-text">One quest at a time.</span></h1>
+              <p class="lead">Practice the decisions behind clean histories, safer reviews, conflict resolution, and reliable releases—without touching a real repository.</p>
+              <div class="hero-actions">
+                <button class="btn btn-primary" data-action="start-training">${complete ? "Continue training" : "Begin your first quest"} →</button>
+                <button class="btn btn-secondary" data-nav="test">Take the assessment</button>
+              </div>
+              <div class="welcome-strip">
+                <div class="icon-box">~/</div>
+                <div><strong>Welcome back, ${escapeHTML(profile.name || "Explorer")}.</strong><p>${roleMessage} Recommended next: ${rec.title}.</p></div>
+              </div>
+            </div>
+            <div class="terminal" aria-label="Git branch visualization">
+              <div class="terminal-head"><span class="terminal-dot"></span><span class="terminal-dot"></span><span class="terminal-dot"></span><span class="terminal-title">gitquest — branch navigator</span></div>
+              <div class="terminal-body">
+                <span class="term-green">$ git log --graph --oneline --all</span>
+                <span class="branch-line term-blue">*   a7f2c1e  (HEAD → main) Merge MR !248</span>
+                <span class="branch-line">|\\</span>
+                <span class="branch-line">| * 91bd120  Add payment validation</span>
+                <span class="branch-line">| * 5cc8fa1  Cover timeout edge case</span>
+                <span class="branch-line">|/</span>
+                <span class="branch-line">*   30fe820  Release 2.4.0</span>
+                <span class="branch-line">*   114dac8  Protect checkout route</span>
+                <div class="terminal-status"><span>✓ CI passed · 2 approvals</span><span>main</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="grid-3">
+            <div class="card"><div class="kpi-label">Quest progress</div><div class="kpi">${complete}/${LESSONS.length}</div><div class="progress"><span style="width:${complete / LESSONS.length * 100}%"></span></div></div>
+            <div class="card"><div class="kpi-label">Personal best</div><div class="kpi">${State.data.test.attempts.length ? State.data.test.bestScore + "%" : "—"}</div><p>Role-weighted assessment</p></div>
+            <div class="card"><div class="kpi-label">Learning streak</div><div class="kpi">${State.data.game.streak} day${State.data.game.streak === 1 ? "" : "s"}</div><p>Return tomorrow to keep it going</p></div>
+          </div>
+          <div class="section-head"><div><span class="eyebrow">How it works</span><h2>Decision first. Command second.</h2></div><p>Every quest connects context, action, reason, and risk.</p></div>
+          <div class="grid-3">
+            <div class="card card-hover"><div class="icon-box">01</div><h3>See the system</h3><p>Read compact Git graphs and follow how references move through real workflows.</p></div>
+            <div class="card card-hover"><div class="icon-box">02</div><h3>Make the call</h3><p>Choose what you would do in a practical collaboration or release scenario.</p></div>
+            <div class="card card-hover"><div class="icon-box">03</div><h3>Learn the why</h3><p>Get immediate feedback on the benefit, tradeoff, and risk behind the action.</p></div>
+          </div>
+        </section>`;
+    }
+
+    function renderTraining() {
+      const ordered = orderedLessons();
+      const complete = State.data.training.completed.length;
+      return `
+        <section class="page">
+          <span class="eyebrow">Training path</span>
+          <h1 style="font-size:clamp(2.2rem,4vw,3.6rem)">Your Git quests</h1>
+          <p class="lead">Ordered for a ${escapeHTML(ROLE_NAMES[State.data.profile.role])}. Finish a scenario to complete each module and earn 120 XP.</p>
+          <div class="card" style="margin-top:28px">
+            <div class="meta-row"><strong>${complete} of ${LESSONS.length} completed</strong><span>${Math.round(complete / LESSONS.length * 100)}%</span></div>
+            <div class="progress" style="margin-top:10px"><span style="width:${complete / LESSONS.length * 100}%"></span></div>
+          </div>
+          <div class="section-head"><div><h2>Recommended path</h2><p>Weak topics automatically move into your recommendations.</p></div><span class="tag good">${escapeHTML(ROLE_NAMES[State.data.profile.role])} track</span></div>
+          <div class="module-list">
+            ${ordered.map((lesson, index) => {
+              const done = State.data.training.completed.includes(lesson.id);
+              const accuracy = getAccuracy(lesson.id);
+              return `<button class="module-card ${done ? "done" : ""}" data-lesson="${lesson.id}">
+                <span class="module-number">${done ? "✓" : String(index + 1).padStart(2, "0")}</span>
+                <span><h3>${lesson.title}</h3><p>${lesson.subtitle}</p><span class="tag" style="margin-top:8px">${lesson.time}</span>${accuracy !== null ? `<span class="tag ${accuracy < .7 ? "warn" : "good"}" style="margin:8px 0 0 5px">${Math.round(accuracy * 100)}% test accuracy</span>` : ""}</span>
+                <span class="module-arrow">→</span>
+              </button>`;
+            }).join("")}
+          </div>
+        </section>`;
+    }
+
+    function renderLesson(id) {
+      const lesson = LESSONS.find(item => item.id === id);
+      const answered = State.lessonAnswer !== null;
+      const correct = State.lessonAnswer === lesson.scenario.answer;
+      const done = State.data.training.completed.includes(id);
+      const visual = lesson.flow
+        ? `<div class="git-visual"><div class="visual-label">Workflow</div><div class="flow">${lesson.flow.map((node, i) => `<span class="flow-node ${i === lesson.flow.length - 1 ? "accent" : ""}">${node}</span>${i < lesson.flow.length - 1 ? '<span class="flow-arrow">→</span>' : ""}`).join("")}</div></div>`
+        : `<div class="git-visual"><div class="visual-label">Git graph</div><pre>${escapeHTML(lesson.visual)}</pre></div>`;
+      return `
+        <section class="page lesson-layout">
+          <aside class="lesson-side">
+            <button class="back-btn" data-action="back-training">← All quests</button>
+            <div class="lesson-steps">
+              <div class="lesson-step active"><span class="step-dot">1</span>Understand</div>
+              <div class="lesson-step active"><span class="step-dot">2</span>Visualize</div>
+              <div class="lesson-step active"><span class="step-dot">3</span>Practice</div>
+              <div class="lesson-step ${done ? "active" : ""}"><span class="step-dot">${done ? "✓" : "4"}</span>Complete</div>
+            </div>
+          </aside>
+          <div class="lesson-main">
+            <div class="lesson-title-row">
+              <div><span class="eyebrow">${lesson.time} quest</span><h1 style="font-size:clamp(2rem,4vw,3.25rem)">${lesson.title}</h1><p class="lead">${lesson.subtitle}</p></div>
+              ${done ? '<span class="tag good">✓ Completed</span>' : ""}
+            </div>
+            <div class="card">
+              <span class="question-topic">01 / Concept</span>
+              <h2>Build the mental model</h2>
+              <p>${lesson.concept}</p>
+              ${visual}
+            </div>
+            <div class="card">
+              <span class="question-topic">02 / Situation → action</span>
+              <h2>Use it in context</h2>
+              <p>${lesson.example}</p>
+              <div class="code-block">${escapeHTML(lesson.command)}</div>
+              <div class="principle-grid">${lesson.practices.map(item => `<div class="principle"><strong>${item[0]}</strong><span>${item[1]}</span></div>`).join("")}</div>
+            </div>
+            ${lesson.simulator ? renderConflictSimulator() : ""}
+            <div class="card practice">
+              <span class="question-topic">03 / Scenario</span>
+              <h2>${lesson.scenario.prompt}</h2>
+              <div class="options">
+                ${lesson.scenario.options.map((option, index) => {
+                  let cls = "";
+                  if (answered && index === lesson.scenario.answer) cls = "correct";
+                  else if (answered && index === State.lessonAnswer) cls = "wrong";
+                  return `<button class="option ${cls}" data-lesson-answer="${index}" ${answered ? "disabled" : ""}><span class="choice-key">${String.fromCharCode(65 + index)}</span>${option}</button>`;
+                }).join("")}
+              </div>
+              ${answered ? `${renderAnswerFeedback(lesson.scenario, State.lessonAnswer)}
+                <div class="test-actions">
+                  ${correct
+                    ? `<button class="btn btn-primary" data-action="complete-lesson">${done ? "Back to quests" : "Mark complete · +120 XP"}</button>`
+                    : '<button class="btn btn-secondary" data-action="retry-lesson">Practice again</button>'}
+                </div>` : ""}
+            </div>
+          </div>
+        </section>`;
+    }
+
+    function renderConflictSimulator() {
+      return `
+        <div class="card simulator">
+          <span class="question-topic">Conflict lab</span>
+          <h2>Resolve the file</h2>
+          <p>Both teams agree payment calls should use a configurable 60-second timeout. Edit the file, remove all markers, then validate your resolution.</p>
+          <textarea id="conflict-editor" spellcheck="false" aria-label="Conflict editor"><<<<<<< HEAD
+timeout = 30
+=======
+timeout = 60
+>>>>>>> feature/payment</textarea>
+          <button class="btn btn-secondary btn-sm" data-action="validate-conflict">Validate resolution</button>
+          <div id="conflict-result"></div>
+        </div>`;
+    }
+
+    function selectQuestions() {
+      const weights = ROLE_WEIGHTS[State.data.profile.role] || ROLE_WEIGHTS.developer;
+      const answered = new Set(Array.isArray(State.data.test.answeredQuestionIds) ? State.data.test.answeredQuestionIds : []);
+      return [...QUESTION_BANK]
+        .filter(question => !answered.has(question.id))
+        .map((question, index) => {
+          const accuracy = getAccuracy(question.topic);
+          const weakBoost = accuracy !== null && accuracy < .7 ? 40 : 0;
+          return { question, score: (weights[question.topic] || 5) + weakBoost + ((index * 7) % 9) };
+        })
+        .sort((a, b) => b.score - a.score)
+        .slice(0, ASSESSMENT_QUESTION_COUNT)
+        .map(item => item.question);
+    }
+
+    function startTest() {
+      State.test = { questions: selectQuestions(), index: 0, selected: null, answers: [] };
+      render();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function renderTest() {
+      if (!State.test) {
+        const last = State.data.test.attempts.at(-1);
+        const availableQuestions = selectQuestions().length;
+        const exhausted = availableQuestions === 0;
+        return `
+          <section class="page test-shell">
+            <span class="eyebrow">Assessment</span>
+            <h1 style="font-size:clamp(2.2rem,5vw,3.8rem)">Prove your Git judgment.</h1>
+            <p class="lead">Up to ${ASSESSMENT_QUESTION_COUNT} role-weighted scenarios, with no repeats. No hints until you decide. Weak areas from previous attempts receive extra attention.</p>
+            <div class="card" style="margin-top:30px">
+              <div class="grid-3">
+                <div><div class="kpi-label">New questions</div><div class="kpi">${availableQuestions}</div></div>
+                <div><div class="kpi-label">Pass mark</div><div class="kpi">80%</div></div>
+                <div><div class="kpi-label">Best score</div><div class="kpi">${State.data.test.attempts.length ? State.data.test.bestScore + "%" : "—"}</div></div>
+              </div>
+              <div class="code-block">Situation → Decision → Git action → Why → Risk</div>
+              ${exhausted ? "<p>You have answered every scenario in the question bank. Your progress is saved; new questions are needed for another assessment.</p>" : `<button class="btn btn-primary" data-action="start-test">${last ? "Try another assessment" : "Start assessment"} →</button>`}
+            </div>
+            <div class="section-head"><div><h2>Assessment rules</h2><p>Designed to test judgment, not command memorization.</p></div></div>
+            <div class="grid-3">
+              <div class="card"><div class="icon-box">?</div><h3>No hints</h3><p>Explanations appear only after you lock in an answer.</p></div>
+              <div class="card"><div class="icon-box">${ASSESSMENT_QUESTION_COUNT}</div><h3>Personalized mix</h3><p>Questions reflect your role and previous weak areas, without repeating completed scenarios.</p></div>
+              <div class="card"><div class="icon-box">XP</div><h3>Earn progress</h3><p>Gain XP for correct decisions and track a personal best.</p></div>
+            </div>
+          </section>`;
+      }
+      if (State.test.complete) return renderResults();
+      const test = State.test;
+      const question = test.questions[test.index];
+      const answered = test.selected !== null;
+      const correct = test.selected === question.answer;
+      return `
+        <section class="page test-shell">
+          <div class="test-top"><span class="kpi-label">Question ${test.index + 1} of ${test.questions.length}</span><span class="tag">${escapeHTML(ROLE_NAMES[State.data.profile.role])} track</span></div>
+          <div class="progress blue"><span style="width:${(test.index + (answered ? 1 : 0)) / test.questions.length * 100}%"></span></div>
+          <div class="card question-card">
+            <span class="question-topic">${escapeHTML(TOPIC_NAMES[question.topic] || question.topic)}</span>
+            <h2>${question.prompt}</h2>
+            <div class="options">
+              ${question.options.map((option, index) => {
+                let cls = "";
+                if (answered && index === question.answer) cls = "correct";
+                else if (answered && index === test.selected) cls = "wrong";
+                return `<button class="option ${cls}" data-test-answer="${index}" ${answered ? "disabled" : ""}><span class="choice-key">${String.fromCharCode(65 + index)}</span>${option}</button>`;
+              }).join("")}
+            </div>
+            ${answered ? `${renderAnswerFeedback(question, test.selected)}
+              <div class="test-actions"><button class="btn btn-primary" data-action="next-question">${test.index === test.questions.length - 1 ? "See my result" : "Next scenario"} →</button></div>` : ""}
+          </div>
+        </section>`;
+    }
+
+    function finishTest() {
+      const test = State.test;
+      const correct = test.answers.filter(answer => answer.correct).length;
+      const score = Math.round(correct / test.questions.length * 100);
+      const topics = {};
+      test.answers.forEach(answer => {
+        topics[answer.topic] ||= { correct: 0, total: 0 };
+        topics[answer.topic].total++;
+        if (answer.correct) topics[answer.topic].correct++;
+        State.data.test.topicTotal[answer.topic] = (State.data.test.topicTotal[answer.topic] || 0) + 1;
+        if (answer.correct) State.data.test.topicCorrect[answer.topic] = (State.data.test.topicCorrect[answer.topic] || 0) + 1;
+      });
+      State.data.test.attempts.push({ date: new Date().toISOString(), score, topics });
+      State.data.test.bestScore = Math.max(State.data.test.bestScore, score);
+      State.data.game.xp += correct * 5 + (score >= 80 ? 100 : 25);
+      test.complete = true;
+      test.result = { score, topics };
+      State.save();
+      render();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function renderResults() {
+      const result = State.test.result;
+      const status = result.score >= 80 ? "PASSED" : result.score >= 60 ? "NEEDS PRACTICE" : "RETRY TRAINING";
+      const areas = Object.entries(result.topics)
+        .map(([topic, value]) => ({ topic, accuracy: value.correct / value.total }))
+        .sort((a, b) => b.accuracy - a.accuracy);
+      const strong = areas.filter(item => item.accuracy >= .7);
+      const weak = areas.filter(item => item.accuracy < .7);
+      return `
+        <section class="page test-shell">
+          <div class="card result-center">
+            <span class="eyebrow">Assessment complete</span>
+            <h1 style="font-size:2.4rem">Your result</h1>
+            <div class="score-ring" style="--score:${result.score}"><strong>${result.score}%</strong></div>
+            <span class="tag ${result.score >= 80 ? "good" : "warn"}">${status}</span>
+            <p style="margin:17px auto 24px;max-width:520px">${result.score >= 80 ? "You demonstrated strong Git judgment under realistic team constraints." : "Your result points to specific quests that will improve your next attempt."}</p>
+            <div class="grid-2" style="text-align:left">
+              <div class="card">
+                <h3>Strong areas</h3>
+                <div class="area-list">${strong.length ? strong.map(item => `<div class="area-item"><span>✓ ${TOPIC_NAMES[item.topic]}</span><strong>${Math.round(item.accuracy * 100)}%</strong></div>`).join("") : "<p>Complete more training and try again.</p>"}</div>
+              </div>
+              <div class="card">
+                <h3>Needs practice</h3>
+                <div class="area-list">${weak.length ? weak.map(item => `<div class="area-item"><span>△ ${TOPIC_NAMES[item.topic]}</span><strong>${Math.round(item.accuracy * 100)}%</strong></div>`).join("") : "<p>No weak topics in this attempt.</p>"}</div>
+              </div>
+            </div>
+            <div class="hero-actions" style="justify-content:center">
+              <button class="btn btn-primary" data-nav="training">Practice recommendations</button>
+              <button class="btn btn-secondary" data-action="start-test">Retake test</button>
+            </div>
+          </div>
+        </section>`;
+    }
+
+    function renderProgress() {
+      const profile = State.data.profile;
+      const level = currentLevel();
+      const nextPct = level.next ? Math.min(100, (State.data.game.xp - level.min) / (level.next.min - level.min) * 100) : 100;
+      const attempts = State.data.test.attempts;
+      const last = attempts.at(-1);
+      const badges = [
+        ["first", "🌱", "First Commit"], ["branch", "🌿", "Branch Navigator"], ["merge", "🔀", "Merge Master"],
+        ["rebase", "♻", "Rebase Ready"], ["conflict", "🧩", "Conflict Solver"], ["release", "🚀", "Release Guardian"],
+        ["strategist", "🏆", "Git Strategist"]
+      ];
+      const topicStats = Object.keys(TOPIC_NAMES).map(topic => ({ topic, accuracy: getAccuracy(topic) })).filter(item => item.accuracy !== null);
+      const recs = recommendations().slice(0, 3);
+      return `
+        <section class="page">
+          <span class="eyebrow">Player dashboard</span>
+          <h1 style="font-size:clamp(2.2rem,4vw,3.6rem)">GitQuest progress</h1>
+          <p class="lead">Your learning record lives only in this browser. Export it anytime for backup or future migration.</p>
+          <div class="profile-grid" style="margin-top:30px">
+            <div class="card profile-card">
+              <div class="profile-avatar">${escapeHTML((profile.name || "G").charAt(0).toUpperCase())}</div>
+              <h2>${escapeHTML(profile.name || "Git Explorer")}</h2>
+              <p>${escapeHTML(level.name)}</p>
+              <div class="data-list">
+                <div class="data-row"><span>Role</span><strong>${escapeHTML(ROLE_NAMES[profile.role])}</strong></div>
+                <div class="data-row"><span>Experience</span><strong>${escapeHTML(profile.experience.charAt(0).toUpperCase() + profile.experience.slice(1))}</strong></div>
+                <div class="data-row"><span>Streak</span><strong>${State.data.game.streak} day${State.data.game.streak === 1 ? "" : "s"}</strong></div>
+              </div>
+              <button class="btn btn-secondary btn-sm" data-action="edit-profile" style="margin-top:17px">Edit profile</button>
+            </div>
+            <div class="card">
+              <div class="meta-row"><span class="kpi-label">Level ${level.number} · ${level.name}</span><strong>${State.data.game.xp} XP</strong></div>
+              <div class="progress" style="margin:11px 0 24px"><span style="width:${nextPct}%"></span></div>
+              <h3>Badges</h3>
+              <div class="badge-grid">
+                ${badges.map(badge => `<div class="badge ${State.data.game.badges.includes(badge[0]) ? "" : "locked"}"><div class="badge-symbol">${badge[1]}</div><div class="badge-name">${badge[2]}</div></div>`).join("")}
+              </div>
+            </div>
+          </div>
+          <div class="grid-2" style="margin-top:18px">
+            <div class="card">
+              <div class="meta-row"><h3>Training</h3><strong>${State.data.training.completed.length}/${LESSONS.length}</strong></div>
+              <div class="bar-list">${orderedLessons().map(lesson => {
+                const done = State.data.training.completed.includes(lesson.id);
+                return `<div class="area-item"><span>${done ? "✓" : "○"} ${lesson.title}</span><strong style="color:${done ? "var(--green)" : "var(--muted)"}">${done ? "Complete" : "Open"}</strong></div>`;
+              }).join("")}</div>
+            </div>
+            <div class="card">
+              <div class="meta-row"><h3>Assessment</h3><span class="tag">${attempts.length} attempt${attempts.length === 1 ? "" : "s"}</span></div>
+              ${attempts.length ? `
+                <div class="grid-2" style="margin:20px 0">
+                  <div><div class="kpi-label">Last score</div><div class="kpi">${last.score}%</div></div>
+                  <div><div class="kpi-label">Personal best</div><div class="kpi">${State.data.test.bestScore}%</div></div>
+                </div>
+                <div class="bar-list">${topicStats.sort((a,b) => a.accuracy - b.accuracy).slice(0,5).map(item => `<div class="bar-item"><div class="meta-row"><span>${TOPIC_NAMES[item.topic]}</span><strong>${Math.round(item.accuracy * 100)}%</strong></div><div class="progress ${item.accuracy < .7 ? "blue" : ""}"><span style="width:${item.accuracy * 100}%"></span></div></div>`).join("")}</div>
+              ` : '<div class="empty"><p>No assessment yet.</p><button class="btn btn-secondary btn-sm" data-nav="test">Take the test</button></div>'}
+            </div>
+          </div>
+          <div class="section-head"><div><h2>Recommended next</h2><p>Based on incomplete modules and test accuracy below 70%.</p></div></div>
+          <div class="grid-3">${recs.length ? recs.map(lesson => `<button class="card card-hover" data-lesson="${lesson.id}" style="color:inherit;text-align:left;cursor:pointer"><span class="tag ${getAccuracy(lesson.id) !== null && getAccuracy(lesson.id) < .7 ? "warn" : ""}">${getAccuracy(lesson.id) !== null ? Math.round(getAccuracy(lesson.id) * 100) + "% accuracy" : "Not completed"}</span><h3 style="margin-top:14px">${lesson.title}</h3><p>${lesson.subtitle}</p></button>`).join("") : '<div class="card"><h3>All quests complete</h3><p>Retake the assessment to keep your judgment sharp.</p></div>'}</div>
+          <div class="section-head"><div><h2>Your data</h2><p>Portable, private, and ready for a future storage adapter.</p></div></div>
+          <div class="card">
+            <div class="hero-actions" style="margin-top:0">
+              <button class="btn btn-secondary" data-action="export">Export progress</button>
+              <button class="btn btn-secondary" data-action="import">Import progress</button>
+              <button class="btn btn-danger" data-action="reset">Reset all data</button>
+            </div>
+          </div>
+        </section>`;
+    }
+
+    function showProfile(edit = false) {
+      const modal = document.getElementById("profile-modal");
+      document.getElementById("profile-name").value = edit ? State.data.profile.name : "";
+      document.getElementById("profile-role").value = State.data.profile.role;
+      document.getElementById("profile-experience").value = State.data.profile.experience;
+      document.getElementById("profile-title").textContent = edit ? "Update your player profile" : "Start your Git journey";
+      document.getElementById("cancel-profile").classList.toggle("hidden", !edit);
+      modal.classList.remove("hidden");
+      setTimeout(() => document.getElementById("profile-name").focus(), 50);
+    }
+
+    function hideProfile() {
+      document.getElementById("profile-modal").classList.add("hidden");
+    }
+
+    function toast(message) {
+      document.querySelector(".toast")?.remove();
+      const node = document.createElement("div");
+      node.className = "toast";
+      node.textContent = message;
+      document.body.appendChild(node);
+      setTimeout(() => node.remove(), 3200);
+    }
+
+    function exportProgress() {
+      const blob = new Blob([JSON.stringify(State.data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `gitquest-progress-${todayKey()}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+      toast("Progress exported.");
+    }
+
+    function importProgress(file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const parsed = JSON.parse(reader.result);
+          if (!parsed.profile || !parsed.training || !parsed.test) throw new Error("Invalid shape");
+          State.data = mergeState(Defaults(), parsed);
+          State.save();
+          render();
+          toast("Progress restored successfully.");
+        } catch (_) {
+          toast("That file is not a valid GitQuest export.");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    document.addEventListener("click", event => {
+      const nav = event.target.closest("[data-nav]");
+      if (nav) { setView(nav.dataset.nav); return; }
+      const lessonButton = event.target.closest("[data-lesson]");
+      if (lessonButton) {
+        State.activeLesson = lessonButton.dataset.lesson;
+        State.view = "training";
+        State.lessonAnswer = null;
+        render();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+      }
+      const lessonAnswer = event.target.closest("[data-lesson-answer]");
+      if (lessonAnswer) {
+        State.lessonAnswer = Number(lessonAnswer.dataset.lessonAnswer);
+        render();
+        return;
+      }
+      const testAnswer = event.target.closest("[data-test-answer]");
+      if (testAnswer && State.test.selected === null) {
+        State.test.selected = Number(testAnswer.dataset.testAnswer);
+        const questionId = State.test.questions[State.test.index].id;
+        const answeredIds = State.data.test.answeredQuestionIds;
+        if (!answeredIds.includes(questionId)) answeredIds.push(questionId);
+        State.save();
+        render();
+        return;
+      }
+      const actionButton = event.target.closest("[data-action]");
+      if (!actionButton) return;
+      const action = actionButton.dataset.action;
+      if (action === "start-training") {
+        const next = recommendations()[0] || orderedLessons()[0];
+        State.view = "training"; State.activeLesson = next.id; State.lessonAnswer = null; render(); window.scrollTo({ top: 0, behavior: "smooth" });
+      } else if (action === "back-training") {
+        State.activeLesson = null; State.lessonAnswer = null; render(); window.scrollTo({ top: 0, behavior: "smooth" });
+      } else if (action === "retry-lesson") {
+        State.lessonAnswer = null; render();
+      } else if (action === "complete-lesson") {
+        const id = State.activeLesson;
+        if (!State.data.training.completed.includes(id)) {
+          State.data.training.completed.push(id);
+          State.data.training.scores[id] = Math.max(State.data.training.scores[id] || 0, 100);
+          State.data.game.xp += 120;
+          State.save();
+          toast("Quest complete. +120 XP");
+        }
+        State.activeLesson = null; State.lessonAnswer = null; render(); window.scrollTo({ top: 0, behavior: "smooth" });
+      } else if (action === "validate-conflict") {
+        const value = document.getElementById("conflict-editor").value;
+        const clean = !/<<<<<<<|=======|>>>>>>>/.test(value);
+        const intended = /timeout\s*=\s*60/.test(value);
+        document.getElementById("conflict-result").innerHTML = clean && intended
+          ? '<div class="feedback"><strong>Resolution is clean.</strong><p>Next: stage the file, continue the rebase, run tests, and update the MR.</p></div>'
+          : '<div class="feedback bad"><strong>Keep resolving.</strong><p>Remove every conflict marker and preserve the agreed 60-second behavior.</p></div>';
+      } else if (action === "start-test") {
+        startTest();
+      } else if (action === "next-question") {
+        const test = State.test;
+        const question = test.questions[test.index];
+        test.answers.push({ id: question.id, topic: question.topic, selected: test.selected, correct: test.selected === question.answer });
+        if (test.index === test.questions.length - 1) finishTest();
+        else { test.index++; test.selected = null; render(); window.scrollTo({ top: 0, behavior: "smooth" }); }
+      } else if (action === "edit-profile") {
+        showProfile(true);
+      } else if (action === "export") {
+        exportProgress();
+      } else if (action === "import") {
+        document.getElementById("import-file").click();
+      } else if (action === "reset") {
+        if (confirm("Reset your profile, XP, lessons, and test history? This cannot be undone.")) {
+          StorageAdapter.clear(); State.data = Defaults(); State.view = "home"; State.activeLesson = null; State.save(); render(); showProfile(false);
+        }
+      }
+    });
+
+    document.getElementById("profile-form").addEventListener("submit", event => {
+      event.preventDefault();
+      const form = new FormData(event.currentTarget);
+      State.data.profile = {
+        name: String(form.get("name")).trim(),
+        role: String(form.get("role")),
+        experience: String(form.get("experience"))
+      };
+      State.save();
+      hideProfile();
+      render();
+      toast("Your learning path is ready.");
+    });
+
+    document.getElementById("cancel-profile").addEventListener("click", hideProfile);
+    document.getElementById("import-file").addEventListener("change", event => {
+      if (event.target.files[0]) importProgress(event.target.files[0]);
+      event.target.value = "";
+    });
+    document.getElementById("menu-btn").addEventListener("click", event => {
+      const nav = document.getElementById("main-nav");
+      const open = nav.classList.toggle("open");
+      event.currentTarget.setAttribute("aria-expanded", String(open));
+    });
+
+    updateStreak();
+    updateHeader();
+    render();
+    document.querySelector('#main-nav [data-nav="home"]').classList.add("active");
+    if (!State.data.profile.name) showProfile(false);
+  </script>
+</body>
+</html>

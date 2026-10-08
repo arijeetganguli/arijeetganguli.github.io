@@ -1,0 +1,354 @@
+import { useCallback, useEffect, useState } from "react";
+import { ArrowRight, Code2, Flame, Gamepad2, RotateCcw, Trophy, Zap } from "lucide-react";
+import { getGame, gameRegistry } from "../game-registry";
+import { createFreshProgress, localProgressStore } from "../progress/LocalProgressStore";
+import type { GameProgress } from "../types";
+import { GitQuestScreen } from "./GitQuestScreen";
+
+type View = "home" | "game" | "progress";
+
+const LEVELS = [
+  { min: 0, name: "New Clone" },
+  { min: 180, name: "Branch Scout" },
+  { min: 450, name: "Merge Maker" },
+  { min: 800, name: "Conflict Solver" },
+  { min: 1250, name: "Release Guardian" },
+  { min: 1750, name: "Git Survivor" },
+];
+
+const ACHIEVEMENTS = [
+  { id: "first-commit", title: "First Commit", detail: "Save your first snapshot.", icon: "01" },
+  { id: "branch-master", title: "Branch Master", detail: "Ship work on an isolated branch.", icon: "⌁" },
+  { id: "conflict-resolver", title: "Conflict Resolver", detail: "Resolve a real collaboration conflict.", icon: "⫶" },
+  { id: "history-detective", title: "History Detective", detail: "Recover a known-good version.", icon: "⌕" },
+  { id: "git-survivor", title: "Git Survivor", detail: "Bring a production incident under control.", icon: "✳" },
+  { id: "git-master", title: "Git Master", detail: "Complete every Git Quest mission.", icon: "★" },
+];
+
+function levelFor(xp: number) {
+  const index = LEVELS.reduce((level, item, itemIndex) => (xp >= item.min ? itemIndex : level), 0);
+  return { ...LEVELS[index], number: index + 1, next: LEVELS[index + 1] };
+}
+
+function App() {
+  const game = getGame("git-quest");
+  const [progress, setProgress] = useState<GameProgress>(() => createFreshProgress("git-quest"));
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
+  const [saveError, setSaveError] = useState("");
+  const [view, setView] = useState<View>("home");
+  const [selectedMissionId, setSelectedMissionId] = useState("");
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+    localProgressStore.getGameProgress("git-quest")
+      .then((saved) => {
+        if (!mounted) return;
+        if (saved) setProgress({ ...createFreshProgress("git-quest"), ...saved });
+        setIsLoading(false);
+      })
+      .catch((error: unknown) => {
+        if (!mounted) return;
+        setLoadError(error instanceof Error ? error.message : "Saved game progress could not be loaded.");
+        setIsLoading(false);
+      });
+    return () => { mounted = false; };
+  }, []);
+
+  const persist = useCallback((next: GameProgress) => {
+    setProgress(next);
+    setSaveError("");
+    void localProgressStore.saveGameProgress(next).catch((error: unknown) => {
+      setSaveError(error instanceof Error ? error.message : "Progress could not be saved to this browser.");
+    });
+  }, []);
+
+  if (!game) return <main className="fatal-message">Git Quest is missing from the game registry.</main>;
+  const currentLevel = levelFor(progress.xp);
+  const mission = game.missions.find((item) => item.id === selectedMissionId) ??
+    game.missions[Math.min(progress.currentMission, game.missions.length - 1)];
+  const percentToNext = currentLevel.next
+    ? Math.round(((progress.xp - currentLevel.min) / (currentLevel.next.min - currentLevel.min)) * 100)
+    : 100;
+
+  async function resetProgress() {
+    try {
+      await localProgressStore.resetGameProgress("git-quest");
+      setProgress(createFreshProgress("git-quest"));
+      setSelectedMissionId("");
+      setShowResetConfirm(false);
+      setSaveError("");
+      setView("home");
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : "Progress could not be reset.");
+    }
+  }
+
+  function startQuest() {
+    setSelectedMissionId(game!.missions[Math.min(progress.currentMission, game!.missions.length - 1)].id);
+    setView("game");
+  }
+
+  function navigate(nextView: View) {
+    setView(nextView);
+    if (nextView !== "game") setSelectedMissionId("");
+  }
+
+  if (isLoading) {
+    return <main className="loading-screen"><span className="brand-mark">S</span><p>Loading your save file…</p></main>;
+  }
+
+  if (loadError) {
+    return (
+      <main className="loading-screen">
+        <span className="brand-mark">!</span>
+        <h1>Save file unavailable</h1>
+        <p>{loadError}</p>
+        <button className="button button-quiet" onClick={() => window.location.reload()}>Reload app</button>
+      </main>
+    );
+  }
+
+  return (
+    <div className="app-frame">
+      <div className="ambient-grid" aria-hidden="true" />
+      <header className="topbar">
+        <div className="topbar-inner">
+          <button className="wordmark" onClick={() => navigate("home")} aria-label="Stavion Labs home">
+            <span className="brand-mark">S</span><span>stavion<span className="wordmark-accent">labs</span></span>
+          </button>
+          <nav className="main-nav" aria-label="Main navigation">
+            <button className={view === "home" ? "active" : ""} onClick={() => navigate("home")}>Explore</button>
+            <button className={view === "game" ? "active" : ""} onClick={startQuest}>Git Quest</button>
+            <button className={view === "progress" ? "active" : ""} onClick={() => navigate("progress")}>My progress</button>
+          </nav>
+          <button className="profile-pill" onClick={() => navigate("progress")} aria-label="View player progress">
+            <span className="profile-level"><Zap size={13} /> LVL {currentLevel.number}</span>
+            <span>{progress.xp.toLocaleString()} XP</span>
+          </button>
+        </div>
+      </header>
+
+      {saveError && (
+        <div className="storage-alert" role="alert">
+          <span>Progress save failed: {saveError}</span>
+          <button onClick={() => setSaveError("")} aria-label="Dismiss save warning">×</button>
+        </div>
+      )}
+
+      {view === "home" && (
+        <HomePage games={gameRegistry} progress={progress} onStart={startQuest} />
+      )}
+
+      {view === "game" && (
+        <GitQuestScreen
+          game={game}
+          mission={mission}
+          progress={progress}
+          onProgress={persist}
+          onMissionSelect={setSelectedMissionId}
+          onBack={() => navigate("home")}
+          onReset={() => setShowResetConfirm(true)}
+        />
+      )}
+
+      {view === "progress" && (
+        <ProgressPage
+          progress={progress}
+          missionCount={game.missions.length}
+          percentToNext={percentToNext}
+          currentLevel={currentLevel}
+          onStart={startQuest}
+          onReset={() => setShowResetConfirm(true)}
+        />
+      )}
+
+      {showResetConfirm && (
+        <div className="modal-backdrop" role="presentation" onMouseDown={(event) => {
+          if (event.target === event.currentTarget) setShowResetConfirm(false);
+        }}>
+          <section className="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="reset-title">
+            <span className="icon-tile"><RotateCcw size={19} /></span>
+            <h2 id="reset-title">Reset this save?</h2>
+            <p>Your mission progress, XP, score, streak, and achievements will be cleared from this browser.</p>
+            <div className="dialog-actions">
+              <button className="button button-quiet" onClick={() => setShowResetConfirm(false)}>Keep progress</button>
+              <button className="button button-danger" onClick={() => void resetProgress()}>Reset game</button>
+            </div>
+          </section>
+        </div>
+      )}
+
+      <Footer />
+    </div>
+  );
+}
+
+interface HomePageProps {
+  games: typeof gameRegistry;
+  progress: GameProgress;
+  onStart: () => void;
+}
+
+function HomePage({ games, progress, onStart }: HomePageProps) {
+  return (
+    <main>
+      <section className="hero-section page-wrap">
+        <div className="hero-copy">
+          <div className="eyebrow"><span className="pulse-dot" /> TECHNICAL LEARNING, REWIRED</div>
+          <h1>Learn tech<br /><span className="hero-highlight">by playing.</span></h1>
+          <p className="hero-description">Real engineering problems. Hands-on missions. No lectures before the action.</p>
+          <div className="hero-actions">
+            <button className="button button-primary" onClick={onStart}>
+              {progress.completedMissions.length ? "Continue playing" : "Start playing"} <ArrowRight size={16} />
+            </button>
+            <a className="button button-quiet" href="#games"><Gamepad2 size={16} /> Explore games</a>
+          </div>
+          <div className="hero-social-proof">
+            <span className="mini-avatar">G</span><span className="mini-avatar">S</span><span className="mini-avatar">+</span>
+            <span>Built for curious engineers</span>
+          </div>
+        </div>
+        <div className="hero-art" aria-label="Git commit graph illustration">
+          <div className="art-topline"><span><span className="online-dot" /> LIVE REPOSITORY</span><span>git-quest / main</span></div>
+          <div className="art-code">
+            <div className="commit-row"><span className="commit-line green-line" /><span className="commit-dot current" /><span className="commit-hash">a7f2c1e</span><span className="commit-message">merge: payment flow</span><span className="branch-chip">main</span></div>
+            <div className="commit-row"><span className="commit-line green-line" /><span className="commit-dot" /><span className="commit-hash">91bd120</span><span className="commit-message">fix: timeout edge case</span></div>
+            <div className="commit-row"><span className="commit-line split-line" /><span className="commit-dot" /><span className="commit-hash">5cc8fa1</span><span className="commit-message">feat: checkout validation</span></div>
+            <div className="commit-row"><span className="commit-line split-line" /><span className="commit-dot branch-dot" /><span className="commit-hash">d3100b2</span><span className="commit-message">feat: payment form</span><span className="branch-chip muted-chip">feature</span></div>
+            <div className="commit-row"><span className="commit-line" /><span className="commit-dot" /><span className="commit-hash">30fe820</span><span className="commit-message">chore: release 2.4.0</span></div>
+          </div>
+          <div className="art-footer">
+            <div><span className="tiny-label">QUEST STATUS</span><strong><span className="online-dot" /> Changes approved</strong></div>
+            <div className="art-xp"><Zap size={15} /> +120 XP</div>
+          </div>
+          <div className="art-corner">GIT QUEST / MISSION 04</div>
+        </div>
+      </section>
+
+      <section className="signal-strip">
+        <div><span className="signal-number">10</span><span>missions to master Git</span></div>
+        <span className="signal-separator" />
+        <div><span className="signal-number">0</span><span>risk to real repositories</span></div>
+        <span className="signal-separator" />
+        <div><span className="signal-number">100%</span><span>local-first, no account needed</span></div>
+      </section>
+
+      <section className="catalogue-section page-wrap" id="games">
+        <div className="section-heading">
+          <div><div className="eyebrow">THE PLAYGROUND</div><h2>Choose your next challenge.</h2></div>
+          <p>Small, focused games. Practical skills you can use tomorrow.</p>
+        </div>
+        <div className="game-grid">
+          {games.map((game) => {
+            const isGitQuest = game.id === "git-quest";
+            const gameProgress = isGitQuest ? progress : undefined;
+            const gamePercent = gameProgress && game.missions.length
+              ? Math.round(gameProgress.completedMissions.length / game.missions.length * 100)
+              : 0;
+            return (
+              <article className={`game-card ${isGitQuest ? "game-card-live" : "game-card-soon"}`} key={game.id}>
+                <div className="game-card-top">
+                  <span className={`game-icon ${isGitQuest ? "game-icon-live" : ""}`}>{game.icon}</span>
+                  <span className={`status-chip ${game.status === "available" ? "status-live" : ""}`}>
+                    <span className="online-dot" />{game.status === "available" ? "AVAILABLE" : "IN DEVELOPMENT"}
+                  </span>
+                </div>
+                <div className="game-meta">{game.category} <span>/</span> {game.difficulty}</div>
+                <h3>{game.title}</h3>
+                <p>{game.description}</p>
+                <div className="game-card-footer">
+                  <span>{game.estimatedMinutes} MIN <span className="meta-divider">·</span> {game.missions.length || "SOON"} {game.missions.length ? "MISSIONS" : ""}</span>
+                  {isGitQuest ? (
+                    <button className="card-action" onClick={onStart} aria-label="Play Git Quest">
+                      {gameProgress?.completedMissions.length ? `${gamePercent}%` : "Play"} <ArrowRight size={15} />
+                    </button>
+                  ) : <span className="coming-label">COMING SOON</span>}
+                </div>
+                {isGitQuest && gamePercent > 0 && <div className="card-progress"><span style={{ width: `${gamePercent}%` }} /></div>}
+              </article>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="manifesto-section page-wrap">
+        <div className="manifesto-mark">“</div>
+        <div><div className="eyebrow">THE STAVION METHOD</div><h2>Don’t read the manual.<br /><span className="hero-highlight">Run the mission.</span></h2></div>
+        <p>Try something. See what happens. Understand why it worked—or how to recover when it didn’t. That’s learning built for the real world.</p>
+      </section>
+    </main>
+  );
+}
+
+interface ProgressPageProps {
+  progress: GameProgress;
+  missionCount: number;
+  percentToNext: number;
+  currentLevel: ReturnType<typeof levelFor>;
+  onStart: () => void;
+  onReset: () => void;
+}
+
+function ProgressPage({ progress, missionCount, percentToNext, currentLevel, onStart, onReset }: ProgressPageProps) {
+  const completion = Math.round((progress.completedMissions.length / missionCount) * 100);
+  return (
+    <main className="page-wrap dashboard-page">
+      <div className="dashboard-heading">
+        <div><div className="eyebrow">PLAYER SAVE / LOCAL</div><h1>Your progress.</h1><p>Every mission cleared is a skill you can take to the real world.</p></div>
+        <button className="button button-quiet" onClick={onStart}>Resume Git Quest <ArrowRight size={15} /></button>
+      </div>
+      <section className="level-card">
+        <div className="level-card-head">
+          <div className="level-emblem"><Zap size={22} /></div>
+          <div><span className="tiny-label">CURRENT RANK</span><h2>{currentLevel.name}</h2></div>
+          <div className="level-xp"><strong>{progress.xp.toLocaleString()}</strong><span>XP</span></div>
+        </div>
+        <div className="rank-progress"><div><span>LEVEL {currentLevel.number}</span><span>{currentLevel.next ? `${currentLevel.next.min - progress.xp} XP TO NEXT` : "MAX LEVEL"}</span></div><div className="progress-track"><span style={{ width: `${percentToNext}%` }} /></div></div>
+      </section>
+      <div className="stat-grid">
+        <StatCard icon={<Trophy size={17} />} label="MISSIONS CLEARED" value={`${progress.completedMissions.length}/${missionCount}`} />
+        <StatCard icon={<Code2 size={17} />} label="FINAL SCORE" value={progress.score.toLocaleString()} />
+        <StatCard icon={<Flame size={17} />} label="DAY STREAK" value={`${progress.streak}`} />
+        <StatCard icon={<Zap size={17} />} label="HINTS USED" value={`${progress.hintsUsed}`} />
+      </div>
+      <section className="achievement-section">
+        <div className="section-heading compact-heading"><div><div className="eyebrow">COLLECTED PROOF</div><h2>Achievements</h2></div><span className="tag-count">{progress.achievements.length} / {ACHIEVEMENTS.length} UNLOCKED</span></div>
+        <div className="achievement-grid">
+          {ACHIEVEMENTS.map((achievement) => {
+            const unlocked = progress.achievements.includes(achievement.id);
+            return <article className={`achievement-card ${unlocked ? "unlocked" : "locked"}`} key={achievement.id}>
+              <div className="achievement-icon">{achievement.icon}</div><div><h3>{achievement.title}</h3><p>{achievement.detail}</p></div><span className="achievement-state">{unlocked ? "UNLOCKED" : "LOCKED"}</span>
+            </article>;
+          })}
+        </div>
+      </section>
+      <section className="mission-progress-section">
+        <div className="section-heading compact-heading"><div><div className="eyebrow">GIT QUEST</div><h2>Mission log</h2></div><span className="tag-count">{completion}% COMPLETE</span></div>
+        <div className="mission-log">
+          {getGame("git-quest")?.missions.map((mission, index) => {
+            const done = progress.completedMissions.includes(mission.id);
+            return <div className={`mission-log-row ${done ? "done" : ""}`} key={mission.id}>
+              <span className="log-index">{done ? "✓" : String(index + 1).padStart(2, "0")}</span><span>{mission.title}</span><span>{done ? `+${progress.missionScores[mission.id] ?? 0} PTS` : "NOT CLEARED"}</span>
+            </div>;
+          })}
+        </div>
+      </section>
+      <div className="dashboard-actions">
+        <p>Your save stays in this browser. No account, no syncing, just your game.</p>
+        <button className="text-button danger-text" onClick={onReset}><RotateCcw size={14} /> Reset all progress</button>
+      </div>
+    </main>
+  );
+}
+
+function StatCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+  return <article className="stat-card"><span className="stat-icon">{icon}</span><div><span className="tiny-label">{label}</span><strong>{value}</strong></div></article>;
+}
+
+function Footer() {
+  return <footer className="site-footer"><div className="footer-inner"><button className="wordmark footer-brand" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}><span className="brand-mark">S</span><span>stavion<span className="wordmark-accent">labs</span></span></button><span>Learn in the simulation. Ship with confidence.</span><span>© 2026 STAVION LABS</span></div></footer>;
+}
+
+export default App;

@@ -1,138 +1,38 @@
-# arijeetganguli.github.io
+# Stavion Labs
 
-Personal portfolio website for Arijeet Ganguli — Data Engineering Manager.
+Stavion Labs is a local-first playground for learning technical skills through interactive missions. The MVP ships with **Git Quest**, a browser-only simulation covering everyday Git work, recovery, and release incidents.
 
-## Tech Stack
+## Run locally
 
-- **HTML5** — Semantic markup
-- **Tailwind CSS** — Utility-first styling (via CDN)
-- **Vanilla JavaScript** — Interactions and scroll effects
-- **SVG** — Data pipeline and architecture diagrams
+Requirements: Node.js 20.19 or newer (or 22.12+).
 
-No build step required. Zero backend dependencies.
-
-## Project Structure
-
-```
-├── index.html          Single-page site with all sections
-├── css/
-│   └── styles.css      Custom animations, chips, scroll reveal
-├── js/
-│   └── main.js         Navbar, mobile menu, scroll reveal
-├── favicon.svg         SVG favicon
-└── README.md           This file
+```sh
+npm install
+npm run dev
 ```
 
-## Run Locally
+Run the automated checks and production build:
 
-Any static file server works. Examples:
-
-```bash
-# Python
-python -m http.server 8000
-
-# Node.js (npx)
-npx serve .
-
-# VS Code
-# Install "Live Server" extension, right-click index.html → Open with Live Server
+```sh
+npm test
+npm run build
+npm run preview
 ```
 
-Then open [http://localhost:8000](http://localhost:8000).
+Git Quest commands are validated against the current mission; each attempt explains why it was accepted or rejected, and accepted steps update the simulated repository view. Nothing is sent to a shell or run against your actual files. Mission progress is stored in this browser's `localStorage`; no login, backend, or external API is used.
+
+The earlier standalone prototype remains at [`gitquest.html`](./gitquest.html). The new app starts at Vite's `index.html`.
+
+## Add a game
+
+1. Define a `GameDefinition` with metadata and its own mission definitions.
+2. Register it in `src/platform/game-registry.ts`.
+3. Implement game-specific validation in its game module.
+
+The catalogue renders from the registry. Common progress persistence uses the async `ProgressStore` interface, currently implemented by `LocalProgressStore`.
 
 ## Deploy to GitHub Pages
 
-### Option 1: Deploy from main branch (simplest)
+The included Actions workflow builds the static site and publishes `dist/`. In repository settings, set **Pages → Build and deployment → Source** to **GitHub Actions**, then push to the configured deployment branch.
 
-1. Push all files to the `main` branch of your `arijeetganguli.github.io` repository:
-
-   ```bash
-   git add .
-   git commit -m "Initial portfolio site"
-   git push origin main
-   ```
-
-2. Go to **Settings → Pages** in your GitHub repository.
-
-3. Under **Source**, select:
-   - **Deploy from a branch**
-   - Branch: `main`
-   - Folder: `/ (root)`
-
-4. Click **Save**.
-
-5. Your site will be live at: **https://arijeetganguli.github.io**
-
-### Option 2: GitHub Actions (automatic)
-
-1. Go to **Settings → Pages** in your GitHub repository.
-
-2. Under **Source**, select **GitHub Actions**.
-
-3. Create `.github/workflows/deploy.yml`:
-
-   ```yaml
-   name: Deploy to GitHub Pages
-
-   on:
-     push:
-       branches: [main]
-
-   permissions:
-     contents: read
-     pages: write
-     id-token: write
-
-   jobs:
-     deploy:
-       runs-on: ubuntu-latest
-       environment:
-         name: github-pages
-         url: ${{ steps.deployment.outputs.page_url }}
-       steps:
-         - uses: actions/checkout@v4
-         - uses: actions/configure-pages@v4
-         - uses: actions/upload-pages-artifact@v3
-           with:
-             path: '.'
-         - id: deployment
-           uses: actions/deploy-pages@v4
-   ```
-
-4. Push to main — the site deploys automatically.
-
-## Custom Domain (Optional)
-
-1. Add a `CNAME` file with your domain:
-   ```
-   yourdomain.com
-   ```
-
-2. Configure DNS to point to GitHub Pages IPs.
-
-3. Enable HTTPS in **Settings → Pages**.
-
-## Sections
-
-| Section      | Description                                             |
-|--------------|---------------------------------------------------------|
-| Hero         | Name, title, tagline, CTA, animated data pipeline SVG   |
-| About        | Professional summary with four focus area cards          |
-| Projects     | Three featured project cards with metrics and tech stack |
-| Architecture | Full data platform diagram (Ingestion → Serving)        |
-| Skills       | Grouped skill chips: Data Engineering, Cloud, Tools      |
-| Contact      | Email, GitHub, LinkedIn links                            |
-
-## Performance Notes
-
-- No heavy JavaScript frameworks
-- Tailwind CSS via CDN (~15KB gzipped)
-- SVG graphics (no raster images)
-- Minimal DOM, semantic HTML
-- Intersection Observer for scroll reveal (no scroll event overhead)
-- `scroll-smooth` via CSS
-- Fonts: Inter + JetBrains Mono (Google Fonts, display=swap)
-
-## License
-
-MIT
+Vite uses relative asset URLs so the app can run at a GitHub Pages project path as well as a local root.

@@ -1,0 +1,103 @@
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { beforeEach, describe, expect, it } from "vitest";
+import App from "./App";
+import { localProgressStore } from "../progress/LocalProgressStore";
+
+describe("Stavion Labs player flow", () => {
+  beforeEach(() => localStorage.clear());
+
+  it("starts Git Quest, gives feedback, and persists the mission step", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(await screen.findByRole("button", { name: /start playing/i }));
+    expect(await screen.findByRole("heading", { name: /First Commit/ })).toBeInTheDocument();
+
+    await user.type(screen.getByRole("textbox", { name: "Git command" }), "git status");
+    await user.click(screen.getByRole("button", { name: "Execute" }));
+    expect(await screen.findByText(/No simulated change was made/i)).toBeInTheDocument();
+    expect(screen.getByText("git status")).toBeInTheDocument();
+    expect(screen.getByText("not accepted")).toBeInTheDocument();
+
+    await user.type(screen.getByRole("textbox", { name: "Git command" }), "git init");
+    await user.click(screen.getByRole("button", { name: "Execute" }));
+    expect(await screen.findByText(/Repository initialized\. Git can now track snapshots/i)).toBeInTheDocument();
+    expect(screen.getByText("repository initialized", { exact: true })).toBeInTheDocument();
+
+    await waitFor(() => {
+      const save = JSON.parse(localStorage.getItem("stavion-labs-progress-v1") ?? "{}");
+      expect(save["git-quest"].missionRuns["first-commit"].stepIndex).toBe(1);
+    });
+  });
+
+  it("preserves saved player progress after a refresh", async () => {
+    localStorage.setItem("stavion-labs-progress-v1", JSON.stringify({
+      "git-quest": {
+        gameId: "git-quest",
+        currentMission: 2,
+        completedMissions: ["first-commit", "missing-change"],
+        score: 200,
+        xp: 200,
+        hintsUsed: 1,
+        achievements: ["first-commit"],
+        lastPlayedAt: "2026-10-07T12:00:00.000Z",
+        streak: 2,
+        lastPlayedDay: "2026-10-07",
+        missionRuns: {},
+        missionScores: { "first-commit": 100, "missing-change": 100 },
+      },
+    }));
+    await expect(localProgressStore.getGameProgress("git-quest")).resolves.toMatchObject({
+      currentMission: 2,
+      completedMissions: ["first-commit", "missing-change"],
+    });
+    render(<App />);
+
+    const user = userEvent.setup();
+    await user.click(await screen.findByRole("button", { name: "View player progress" }));
+    expect(await screen.findByText("2/10")).toBeInTheDocument();
+    expect(screen.getByText("FINAL SCORE").parentElement).toHaveTextContent("200");
+  });
+
+  it("requires the accepted choice before resolving a conflict", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(await screen.findByRole("button", { name: /start playing/i }));
+
+    for (const command of ["git init", "git add README.md", 'git commit -m "Initial commit"']) {
+      await user.type(screen.getByRole("textbox", { name: "Git command" }), command);
+      await user.click(screen.getByRole("button", { name: "Execute" }));
+    }
+    await user.click(await screen.findByRole("button", { name: /next mission/i }));
+
+    for (const command of ["git status", "git add src/checkout.ts", 'git commit -m "Fix checkout validation"']) {
+      await user.type(screen.getByRole("textbox", { name: "Git command" }), command);
+      await user.click(screen.getByRole("button", { name: "Execute" }));
+    }
+    await user.click(await screen.findByRole("button", { name: /next mission/i }));
+
+    for (const command of ["git switch -c feature/dark-mode", "git add src/theme.css", 'git commit -m "Add dark theme"']) {
+      await user.type(screen.getByRole("textbox", { name: "Git command" }), command);
+      await user.click(screen.getByRole("button", { name: "Execute" }));
+    }
+    await user.click(await screen.findByRole("button", { name: /next mission/i }));
+
+    for (const command of ["git switch main", "git merge feature/profile"]) {
+      await user.type(screen.getByRole("textbox", { name: "Git command" }), command);
+      await user.click(screen.getByRole("button", { name: "Execute" }));
+    }
+    await user.click(await screen.findByRole("button", { name: /next mission/i }));
+
+    await user.click(screen.getByRole("radio", { name: /timeout = 30/i }));
+    await user.type(screen.getByRole("textbox", { name: "Git command" }), "git add config/payment.ts");
+    await user.click(screen.getByRole("button", { name: "Execute" }));
+    expect(await screen.findByText(/agreed product behavior is 60 seconds/i)).toBeInTheDocument();
+    expect(screen.getByText("STEP 1 / 2")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("radio", { name: /timeout = 60/i }));
+    await user.type(screen.getByRole("textbox", { name: "Git command" }), "git add config/payment.ts");
+    fireEvent.submit(screen.getByRole("textbox", { name: "Git command" }).closest("form")!);
+    expect(await screen.findByText(/The agreed behavior is staged/i)).toBeInTheDocument();
+  });
+});
